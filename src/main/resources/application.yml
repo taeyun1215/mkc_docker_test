@@ -4,13 +4,25 @@ environments:
   product:
     url: http://localhost:8080
 
+43:
+  201:
+    144:
+      113:
 spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:mariadb://localhost:3306/mkc
+    url: jdbc:mariadb://43.201.144.113:3306/mkc
     username: root
     password: taeyun1215
+
+#spring:
+#  profiles:
+#    active: dev
+#  datasource:
+#    url: jdbc:mariadb://localhost:3306/mkc
+#    username: root
+#    password: taeyun1215
 
 #spring:
 #  profiles:
@@ -50,3 +62,6 @@ file:
     path: C:/Users/tylee/Desktop/image/
 # todo : aws s3 버켓에 추가하기
 # todo : cloudflare 라이브러리 다운 받고 추가하기
+
+
+
