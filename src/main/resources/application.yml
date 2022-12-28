@@ -4,13 +4,13 @@ environments:
   product:
     url: http://localhost:8080
 
-#spring:
-#  profiles:
-#    active: dev
-#  datasource:
-#    url: jdbc:mariadb://43.201.144.113:3306/mkc
-#    username: root
-#    password: taeyun1215
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mariadb://43.201.144.113:3306/mkc
+    username: root
+    password: 6548
 
 #spring:
 #  profiles:
