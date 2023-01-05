@@ -42,7 +42,7 @@ public class SecurityConfig {
         http.csrf().disable();
         // 스프링 시큐리티가 세션을 생성하지 않고 기존 세션을 사용하지도 않음(JWT 사용을 위함)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/sample","/api/login/**", "/api/token/refresh/**", "/api/user", "/email/certify-regis", "/api/check-email-code", "/post/**").permitAll();
+        http.authorizeRequests().antMatchers("/sample", "/api/login/**", "/api/token/refresh/**", "/api/user", "/email/certify-regis", "/api/check-email-code", "/post/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
         // http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
