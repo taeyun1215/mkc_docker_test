@@ -18,9 +18,9 @@ public interface PostRepo extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndUser(Long post_id, User user);
     Optional<Post> findByTitle(String title);
 
-//    // keyword가 포함 된 모든 Post를 반환.
+//     keyword가 포함 된 모든 Post를 반환.
 //    @Query(
-//            value = "SELECT p FROM post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%",
+//            value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%",
 //            countQuery = "SELECT COUNT(p.id) FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%"
 //    )
 //    Page<Post> findAllSearch(@Param("keyword") String keyword, Pageable pageable);

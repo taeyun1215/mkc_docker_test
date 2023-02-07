@@ -19,16 +19,16 @@ public class User {
     @Id @GeneratedValue(strategy = AUTO)
     private Long id;
 
-    @Size(min=2, max=12)
-    @Column(nullable = false, unique = true)
+    @Size(min=3, max=10)
+    @Column(nullable = false)
     private String nickname; // 닉네임
 
     @Size(min=5, max=15)
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Size(min=8)
-    @Column(nullable = false, unique = true)
+    @Size(max = 300)
+    @Column(nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -39,8 +39,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(max=100)
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private boolean emailVerified; // 이메일 인증 여부
 
     private LocalDateTime joinedAt; // 로그인한 시간
@@ -51,4 +50,7 @@ public class User {
         this.joinedAt = LocalDateTime.now();
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
 }

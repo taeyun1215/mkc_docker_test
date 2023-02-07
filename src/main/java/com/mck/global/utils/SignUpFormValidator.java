@@ -24,5 +24,8 @@ public class SignUpFormValidator implements Validator {
         if(userRepo.existsByUsername(signUpDto.getUsername())){
             errors.rejectValue("username", "invalid.username", new Object[]{signUpDto.getUsername()}, "이미 사용중인 아이디 입니다.");
         }
+        if(userRepo.existsByEmail(signUpDto.getEmail())){
+            errors.rejectValue("email", "invalid.email", new Object[]{signUpDto.getEmail()}, "이미 사용중인 이메일 입니다.");
+        }
     }
 }

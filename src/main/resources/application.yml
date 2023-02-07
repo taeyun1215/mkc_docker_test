@@ -20,14 +20,6 @@ spring:
 #    username: root
 #    password: taeyun1215
 
-#spring:
-#  profiles:
-#    active: dev
-#  datasource:
-#    url: jdbc:mariadb://193.123.230.252:3306/mkc
-#    username: root
-#    password: u7q2q8bvRZ7d
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -40,7 +32,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ghkwon0130@gmail.com
-    password: zbptllrlqgohvsus
+    password: uglzohnwrzkqwfzb
     properties:
       mail:
         smtp:
@@ -52,12 +44,11 @@ spring:
   redis:
     port: 6379
     host: 127.0.0.1
+    username: root
+    password: 3iZXb4AK5dH5
 
 file:
   upload:
     path: C:/Users/tylee/Desktop/image/
 # todo : aws s3 버켓에 추가하기
 # todo : cloudflare 라이브러리 다운 받고 추가하기
-
-
-

@@ -28,5 +28,7 @@ public interface UserService {
     // 유저 정보 생성
     User newUser(UserSignUpDto userSignUpDto);
 
+    // 이메일로 유저 확인 후 유저 정보 리턴
+    User checkUserEmail(String email);
 
 }

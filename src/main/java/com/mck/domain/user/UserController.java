@@ -10,6 +10,8 @@ import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
 import com.mck.global.error.ErrorCode;
+import com.mck.global.utils.ErrorObject;
+import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
@@ -18,20 +20,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -47,6 +51,7 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
+    private final TemplateEngine templateEngine;
 
     @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -55,45 +60,45 @@ public class UserController {
 
     // 유저 등록
     @PostMapping("/user")
-    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, Errors errors) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+    public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user").toUriString());
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
         if (!StringUtils.equals(userSignUpDto.getPassword(), userSignUpDto.getConfirmPassword())) {
             log.error("검증실패");
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
-                    .type(ErrorCode.MISMATCHED_PASSWORD.getMessage())
-                    .build();
+            errorObject = ErrorObject.builder().code("different_confirmPassword").message("비밀번호와 비밀번호 확인이 일치하지 않습니다.").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
 
         if (errors.hasErrors()) {
             System.out.println("검증실패");
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg(errors.getFieldError().getDefaultMessage())
-                    .type(errors.getFieldError().getCode())
-                    .build();
+            errorObject = ErrorObject.builder().code(errors.getFieldError().getCode()).message(errors.getFieldError().getDefaultMessage()).build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         } else {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .data(saveUser).build();
+            Map<String, String> token = getToken(user, request);
 
-            return ResponseEntity.created(uri).body(object);
+            returnObject = ReturnObject.builder().success(true).data(token).build();
+
+
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 
     // 새로운 권한 생성
     @PostMapping("/role")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
@@ -101,6 +106,9 @@ public class UserController {
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 // 토크만 추출 하도록 type부분 제거
@@ -112,32 +120,26 @@ public class UserController {
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();
                 User user = userService.getUser(username);
-                String access_token = JWT.create()
-                        // 토큰 이름
-                        .withSubject(user.getUsername())
-                        // 토큰 만료일
-                        // 30분
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                        // 토큰 발행자
-                        .withIssuer(request.getRequestURI().toString())
-                        // 토큰 payload 작성
-                        .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
-                        // 토큰 서명
-                        .sign(algorithm);
 
-                Map<String, String> token = new HashMap<>();
-                token.put("access_token", access_token);
-                token.put("refresh_token", refresh_token);
+                Map<String, String> token = getToken(user, request);
+
+                returnObject = ReturnObject.builder().success(true).data(token).build();
+
                 response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), token);
+
+                new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
                 // response.sendError(FORBIDDEN.value());
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", e.getMessage());
+
+                errorObject = ErrorObject.builder().code("invalid_token").message(e.getMessage()).build();
+                returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
                 response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             }
         } else {
             throw new RuntimeException("Refresh 토큰이 없습니다.");
@@ -146,8 +148,10 @@ public class UserController {
 
     // 회원탈퇴
     @DeleteMapping("/user")
-    public void deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<ReturnObject> deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String token = authorizationHeader.substring("Bearer ".length());
@@ -156,16 +160,21 @@ public class UserController {
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
                 userService.deleteUser(username);
+
+                returnObject = ReturnObject.builder().success(true).build();
+
+                return ResponseEntity.ok().body(returnObject);
+
             } catch (Exception e) {
-                response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                errorObject = ErrorObject.builder().message(e.getMessage()).code(APPLICATION_JSON_VALUE).build();
+                returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+                return ResponseEntity.ok().body(returnObject);
             }
         } else {
-            throw new RuntimeException("요청 처리에 필요한 토큰값이 없습니다.");
+            errorObject = ErrorObject.builder().message("토큰이 없거나 올바르지 않은 토큰입니다.").code("invalid_token").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 
@@ -173,23 +182,21 @@ public class UserController {
     @GetMapping("/check-email-code")
     public ResponseEntity<ReturnObject> checkEmailCode(String code, String email, String username, Model model) {
         User user = userService.getUser(username);
-        ReturnObject object;
+        ReturnObject returnObject;
+        ErrorObject errorObject;
         if(user == null){
-            object = ReturnObject.builder()
-                    .type("wrong.username")
-                    .msg("이메일 확인 링크가 정확하지 않습니다.")
-                    .build();
-            return ResponseEntity.badRequest().body(object);
+            errorObject = ErrorObject.builder().message("이메일 확인 링크가 정확하지 않습니다.").code("wrong_username").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
         }
 
         UserEmail userEmail = UserEmail.builder().email(email).code(code).build();
 
         if (!emailService.checkCertifyEmail(userEmail)) {
-            object = ReturnObject.builder()
-                    .type("wrong.code")
-                    .msg("인증 코드가 틀립니다.")
-                    .build();
-            return ResponseEntity.badRequest().body(object);
+            errorObject = ErrorObject.builder().message("인증 코드가 틀립니다.").code("wrong_code").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+            return ResponseEntity.badRequest().body(returnObject);
         }
 
         user.completeSignUp();
@@ -198,13 +205,79 @@ public class UserController {
 
         model.addAttribute("username", username);
 
-        object = ReturnObject.builder()
-                .msg("ok")
-                .data(model)
-                .build();
+        returnObject = ReturnObject.builder().success(true).data(model).build();
 
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
 
     }
 
+    // 사용자 id 찾기
+    // 이메일을 입력하면 해당 이메일로 가입된 계정을 찾고 계정이 존재하면 입력한 이메일로 아이디 전달
+    @GetMapping("/username")
+    public ResponseEntity<ReturnObject> findUsername(@RequestParam String email) {
+        User result = userService.checkUserEmail(email);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        if (result != null){
+            Context context = new Context();
+            context.setVariable("link", "/api/username");
+            context.setVariable("username", result.getUsername());
+            String message = templateEngine.process("mail/findUsernameForm", context);
+
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .to(email)
+                    .subject("MCK 프로젝트, 아이디 찾기")
+                    .message(message)
+                    .build();
+
+            emailService.sendEmail(emailMessage);
+
+            ReturnObject object = ReturnObject.builder().success(true).build();
+
+            return ResponseEntity.ok().body(object);
+
+        } else{
+            log.error("해당 이메일로 가입된 계정을 찾을 수 없습니다.");
+
+            errorObject = ErrorObject.builder().message("해당 이메일로 가입된 계정을 찾을 수 없습니다.").code("invalid_email").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
+        }
+    }
+
+    private Map<String, String> getToken(User user, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+
+        // 토큰 서명용 키 생성
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        // 최초 접속시 발급하는 토큰
+        String access_token = JWT.create()
+                // 토큰 이름
+                .withSubject(user.getUsername())
+                // 토큰 만료일
+                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                // 토큰 발행자
+                .withIssuer(request.getRequestURI().toString())
+                // 토큰 payload 작성
+                .withClaim("roles", authenticationToken.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                // 토큰 서명
+                .sign(algorithm);
+
+        // access_token을 재발급 받을 수 있는 토큰
+        String refresh_token = JWT.create()
+                // 토큰 이름
+                .withSubject(user.getUsername())
+                // 토큰 만료일
+                .withExpiresAt(new Date(System.currentTimeMillis() + 120 * 60 * 1000))
+                // 토큰 발행자
+                .withIssuer(request.getRequestURI().toString())
+                // 토큰 서명
+                .sign(algorithm);
+
+        Map<String, String> token = new HashMap<>();
+        token.put("access_token", access_token);
+        token.put("refresh_token", refresh_token);
+        return token;
+    }
 }

@@ -3,12 +3,16 @@ package com.mck.global.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.InvalidClaimException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -36,7 +40,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") ){
             // 필터체인을 호출
             filterChain.doFilter(request, response);
-        } else{
+        } else {
             // 헤더에서 Authorization 키 찾음
             String authorizationHeader = request.getHeader(AUTHORIZATION);
             // 토큰 기반 인증시 요청 헤더에 Authorization : <type> <token>의 구성을 취하는 것이 기본 포멧
@@ -64,15 +68,18 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     // 나머지 필터가 계속 진행되도록 필터체인 호출
                     filterChain.doFilter(request, response);
 
+                } catch (SignatureVerificationException e) {
+                    log.info("Invalid JWT signature");
+                    throw new JwtException("invalid_signature");
+                } catch (TokenExpiredException e) {
+                    log.info("Expired JWT token");
+                    throw new JwtException("expired_token");
+                } catch (InvalidClaimException e){
+                    log.info("Invalid JWT token");
+                    throw new JwtException("invalid_token");
                 } catch (Exception e) {
                     log.error("로그인 에러 : {}", e.getMessage());
-                    response.setHeader("error", e.getMessage());
-                    response.setStatus(FORBIDDEN.value());
-                    // response.sendError(FORBIDDEN.value());
-                    Map<String, String> error = new HashMap<>();
-                    error.put("error_message", e.getMessage());
-                    response.setContentType(APPLICATION_JSON_VALUE);
-                    new ObjectMapper().writeValue(response.getOutputStream(), error);
+                    throw new JwtException("invalid_token");
                 }
             } else {
                 // 토큰 정보가 없으면 다음 필터 진행

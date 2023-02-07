@@ -1,11 +1,7 @@
 package com.mck.domain.post;
 
 import com.mck.domain.user.User;
-import com.mck.domain.user.UserRepo;
 import com.mck.domain.user.UserService;
-import com.mck.domain.user.dto.UserSignUpDto;
-import com.mck.global.error.ErrorCode;
-import com.mck.global.service.UserDetailsImpl;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +18,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,10 +26,7 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-
-    private final UserService userService; // 삭제 예정.
-    private final PasswordEncoder passwordEncoder; // 삭제 예정.
-    private final UserRepo userRepo; // 삭제 예정.
+    private final UserService userService;
 
     // Paging 게시글, 10개씩.
     @GetMapping("/all")
@@ -45,7 +36,6 @@ public class PostController {
         Page<Post> posts = postService.pagePostList(pageable);
 
         ReturnObject object = ReturnObject.builder()
-                .msg("ok")
                 .data(posts)
                 .build();
 
@@ -61,7 +51,6 @@ public class PostController {
         Page<Post> posts = postService.searchPost(keyword, pageable);
 
         ReturnObject object = ReturnObject.builder()
-                .msg("ok")
                 .data(posts)
                 .build();
 
@@ -72,16 +61,14 @@ public class PostController {
     @GetMapping("/read/{post_id}")
     public ResponseEntity<ReturnObject> readPost(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-
+            @AuthenticationPrincipal String username
     ) {
-        User user = userDetails.getUser();
+        User user = userService.getUser(username);
         Post post = postService.updateViewPost(postId);
 
         // 자기가 쓴 게시물을 자기가 본다면 수정, 삭제를 할 수 있게 해주는 부분.
         if (post.getUser().getId().equals(user.getId())) {
             ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
                     .data(post) // todo : writer = true 로 두고 싶음.
                     .build();
 
@@ -89,7 +76,6 @@ public class PostController {
         }
 
         ReturnObject object = ReturnObject.builder()
-                .msg("ok")
                 .data(post)
                 .build();
 
@@ -100,26 +86,21 @@ public class PostController {
     @PostMapping("/new")
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            BindingResult bindingResult,
+            @AuthenticationPrincipal String username
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-//        User user = userDetails.getUser();
-
-        User user = userService.getUser("ghkwon4274"); // 삭제 예정
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
-                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                    .type(bindingResult.getFieldError().getCode())
                     .build();
 
             return ResponseEntity.badRequest().body(object);
         } else {
+            User user = userService.getUser(username);
             Post post = postService.savePost(postDto, user);
 
             ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
                     .data(post)
                     .build();
 
@@ -132,18 +113,14 @@ public class PostController {
     public ResponseEntity<ReturnObject> editPost(
             @PathVariable("post_id") Long postId,
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            BindingResult bindingResult,
+            @AuthenticationPrincipal String username
     ) throws IOException {
-//        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
+        User user = userService.getUser(username);
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
-                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                    .type(bindingResult.getFieldError().getCode())
                     .build();
 
             return ResponseEntity.badRequest().body(object);
@@ -151,7 +128,6 @@ public class PostController {
             postService.editPost(postId, postDto, user);
 
             ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
                     .build();
 
             return ResponseEntity.ok().body(object);
@@ -161,19 +137,14 @@ public class PostController {
     // 게시글 삭제
     @DeleteMapping("/delete/{post_id}")
     public ResponseEntity<ReturnObject> deletePost(
-//            @PathVariable("post_id") Long postId,
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal String username
     ) throws IOException {
-//        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
-        Long postId = 1L; // 삭제 예정.
-
+        User user = userService.getUser(username);
         postService.deletePost(postId, user);
 
         ReturnObject object = ReturnObject.builder()
-                .msg("ok")
                 .build();
 
         return ResponseEntity.ok().body(object);
@@ -184,19 +155,13 @@ public class PostController {
     @PostMapping("like/{post_id}")
     public ResponseEntity<ReturnObject> likePost(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal String username
     ) {
 
-//        User user = userDetails.getUser();
-
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
-
+        User user = userService.getUser(username);
         postService.likePost(postId, user);
 
-
         ReturnObject object = ReturnObject.builder()
-                .msg("ok")
                 .build();
 
         return ResponseEntity.ok().body(object);

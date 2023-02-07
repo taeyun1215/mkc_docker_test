@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -68,5 +69,16 @@ public class UserServiceImpl implements UserService {
         user.setEmailVerified(false);
 
         return user;
+    }
+
+    @Override
+    public User checkUserEmail(String email) {
+        boolean result = userRepo.existsByEmail(email);
+        if (result){
+            Optional<User> user = userRepo.findByEmail(email);
+            return user.get();
+        } else{
+            return null;
+        }
     }
 }
