@@ -58,7 +58,7 @@ public class UserController {
     }
 
     // 유저 등록
-    @PostMapping("/")
+    @PostMapping("/user")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user").toUriString());
 
