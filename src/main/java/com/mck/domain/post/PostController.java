@@ -86,11 +86,11 @@ public class PostController {
     @PostMapping("/new")
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult,
-            @AuthenticationPrincipal String username
+            BindingResult bindingResult
+//            @AuthenticationPrincipal String username
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-
+        String username = "taeyun1215";
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
                     .build();

@@ -22,7 +22,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -49,6 +49,6 @@ spring:
 
 file:
   upload:
-    path: C:/Users/tylee/Desktop/image/
+    path: ~/yeh/images/
 # todo : aws s3 버켓에 추가하기
 # todo : cloudflare 라이브러리 다운 받고 추가하기
