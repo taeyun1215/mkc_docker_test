@@ -9,7 +9,6 @@ import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
-import com.mck.global.error.ErrorCode;
 import com.mck.global.utils.ErrorObject;
 import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
@@ -59,7 +58,7 @@ public class UserController {
     }
 
     // 유저 등록
-    @PostMapping("/user")
+    @PostMapping("/")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user").toUriString());
 

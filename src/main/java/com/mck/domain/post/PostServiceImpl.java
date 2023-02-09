@@ -61,11 +61,12 @@ public class PostServiceImpl implements PostService {
         Post post = postDto.toEntity(findUser);
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
+        if (postDto.getImageFiles() != null) {
+            List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
+            log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
 
-        List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
-        log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
-
-        savePost.setImages(saveImageFiles);
+            savePost.setImages(saveImageFiles);
+        }
 
         return savePost;
     }
