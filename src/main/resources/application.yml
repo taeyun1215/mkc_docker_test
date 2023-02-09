@@ -49,6 +49,6 @@ spring:
 
 file:
   upload:
-    path: ~/yeh/images
+    path: yeh/
 # todo : aws s3 버켓에 추가하기
 # todo : cloudflare 라이브러리 다운 받고 추가하기
