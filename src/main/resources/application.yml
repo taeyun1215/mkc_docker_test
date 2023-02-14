@@ -47,6 +47,23 @@ spring:
     username: root
     password: 3iZXb4AK5dH5
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA5G5YMWOQTZQHBMFJ
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: yeh-bucket
+    stack:
+      auto: false
+
 file:
   upload:
     path: /
