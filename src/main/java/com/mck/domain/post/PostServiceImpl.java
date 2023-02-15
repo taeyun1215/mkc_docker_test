@@ -8,6 +8,7 @@ import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
+import com.mck.infra.image.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepo postLikeRepo;
 
     private final ImageService imageService;
+    private final AwsS3Service awsS3Service;
 
     @Override
     @Transactional
@@ -62,10 +64,11 @@ public class PostServiceImpl implements PostService {
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
         if (postDto.getImageFiles() != null) {
-            List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
-            log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
-
-            savePost.setImages(saveImageFiles);
+//            List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
+//            log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
+//
+//            savePost.setImages(saveImageFiles);
+            awsS3Service.uploadFile(post, postDto.getImageFiles());
         }
 
         return savePost;

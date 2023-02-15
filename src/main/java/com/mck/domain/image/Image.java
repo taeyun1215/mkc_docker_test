@@ -29,7 +29,7 @@ public class Image {
             length = 500,
             nullable = false
     )
-    private String imageName; // 실제로 로컬에 저장할 이미지 파일명
+    private String imageName; // 실제로 서버에 저장할 이미지 파일명
 
     @Column(
             length = 500,

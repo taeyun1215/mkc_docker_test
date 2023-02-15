@@ -15,13 +15,6 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    @Value("${file.upload.path}")
-    private String fileUploadPath;
-
-    public String getFullFileUploadPath(String filename) {
-        return fileUploadPath + filename;
-    }
-
     // 이미지 파일이 여러개 인 경우 나눠서 저장하기 위함. -> 근데 그전에 service단에서 미리 나눠주고 처리함.
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
         List<UploadFile> storeFileResult = new ArrayList<>();
@@ -35,7 +28,7 @@ public class FileService {
     }
 
     // UploadFile 로 변환.
-    public UploadFile storeFile(MultipartFile multipartFile) throws IOException {
+    public UploadFile storeFile(MultipartFile multipartFile) {
 
         if(multipartFile.isEmpty()) {
             return null;
@@ -43,8 +36,7 @@ public class FileService {
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
-        String fileUploadUrl = getFullFileUploadPath(storeFileName);
-        multipartFile.transferTo(new File(getFullFileUploadPath(storeFileName)));
+        String fileUploadUrl = "";
 
         return new UploadFile(originalFilename, storeFileName, fileUploadUrl);
     }
@@ -60,21 +52,6 @@ public class FileService {
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
-    }
-
-    // 이미지 파일 삭제.
-    public void deleteFile(String fileUploadUrl) {
-        String localFileUploadUrl = fileUploadUrl.replaceAll("/images/", "");
-        String DBFileUploadUrl = getFullFileUploadPath(localFileUploadUrl);
-
-        File deleteFile = new File(DBFileUploadUrl);
-
-        if(deleteFile.exists()) {
-            deleteFile.delete();
-            log.info("파일을 삭제하였습니다.");
-        } else {
-            log.info("파일이 존재하지 않습니다.");
-        }
     }
 
 }

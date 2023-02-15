@@ -74,7 +74,6 @@ public class ImageServiceImpl implements ImageService {
         // 기존 상품 이미지 파일이 존재하는 경우 파일 삭제
         for (Image oldImage : oldImages) {
             if(StringUtils.hasText(oldImage.getImageName())) {
-                fileService.deleteFile(oldImage.getImageUrl()); // local 데이터 삭제
             }
         }
 
@@ -90,7 +89,6 @@ public class ImageServiceImpl implements ImageService {
 
         for (Image findImage : findImages) {
             if(StringUtils.hasText(findImage.getImageName())) {
-                fileService.deleteFile(findImage.getImageUrl()); // local 데이터 삭제
             }
         }
     }
