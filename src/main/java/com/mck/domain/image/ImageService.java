@@ -13,13 +13,13 @@ import java.util.List;
 public interface ImageService {
     // DB에 이미지 저장.
     List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException;
-
-    // 이미지 순번대로 반환해주는 JPA
-    List<Image> findByPostOrderByImageIdAsc(Post post);
-
-    // 이미지 업데이트
-    void updateImage(List<MultipartFile> imageFile, Post post) throws IOException;
-
-    // 이미지 삭제
-    void deleteImage(Post post) throws IOException;
+//
+//    // 이미지 순번대로 반환해주는 JPA
+//    List<Image> findByPostOrderByImageIdAsc(Post post);
+//
+//    // 이미지 업데이트
+//    void updateImage(List<MultipartFile> imageFile, Post post) throws IOException;
+//
+//    // 이미지 삭제
+//    void deleteImage(Post post) throws IOException;
 }

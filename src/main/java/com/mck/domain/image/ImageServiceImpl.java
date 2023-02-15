@@ -52,45 +52,45 @@ public class ImageServiceImpl implements ImageService {
                 .imageName(storeFileName)
                 .imageUrl(imageUrl)
                 .originalImageName(originalFilename)
-                .post(post)
+//                .post(post)
                 .build();
 
         Image saveImage = imageRepo.save(image);
         return saveImage;
     }
+//
+//    // 이미지 순번대로 반환해주는 JPA
+//    public List<Image> findByPostOrderByImageIdAsc(Post post) {
+//        return imageRepo.findByPostOrderByIdAsc(post);
+//    }
 
-    // 이미지 순번대로 반환해주는 JPA
-    public List<Image> findByPostOrderByImageIdAsc(Post post) {
-        return imageRepo.findByPostOrderByIdAsc(post);
-    }
-
-    // 이미지 업데이트
-    @Override
-    @Transactional
-    public void updateImage(List<MultipartFile> imageFiles, Post post) throws IOException {
-
-        List<Image> oldImages = imageRepo.findByPost(post);
-
-        // 기존 상품 이미지 파일이 존재하는 경우 파일 삭제
-        for (Image oldImage : oldImages) {
-            if(StringUtils.hasText(oldImage.getImageName())) {
-            }
-        }
-
-        imageRepo.deleteByPost(post);
-        saveImages(post, imageFiles);
-    }
-
-    // 이미지 삭제
-    @Override
-    @Transactional
-    public void deleteImage(Post post) throws IOException {
-        List<Image> findImages = imageRepo.findByPost(post);
-
-        for (Image findImage : findImages) {
-            if(StringUtils.hasText(findImage.getImageName())) {
-            }
-        }
-    }
+//    // 이미지 업데이트
+//    @Override
+//    @Transactional
+//    public void updateImage(List<MultipartFile> imageFiles, Post post) throws IOException {
+//
+//        List<Image> oldImages = imageRepo.findByPost(post);
+//
+//        // 기존 상품 이미지 파일이 존재하는 경우 파일 삭제
+//        for (Image oldImage : oldImages) {
+//            if(StringUtils.hasText(oldImage.getImageName())) {
+//            }
+//        }
+//
+//        imageRepo.deleteByPost(post);
+//        saveImages(post, imageFiles);
+//    }
+//
+//    // 이미지 삭제
+//    @Override
+//    @Transactional
+//    public void deleteImage(Post post) throws IOException {
+//        List<Image> findImages = imageRepo.findByPost(post);
+//
+//        for (Image findImage : findImages) {
+//            if(StringUtils.hasText(findImage.getImageName())) {
+//            }
+//        }
+//    }
 
 }

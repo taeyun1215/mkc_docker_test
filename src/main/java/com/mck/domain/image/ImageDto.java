@@ -21,7 +21,7 @@ public class ImageDto {
                 .originalImageName(originalImageName)
                 .imageName(imageName)
                 .imageUrl(imageUrl)
-                .post(post)
+//                .post(post)
                 .build();
     }
 

@@ -54,12 +54,12 @@ public class Post {
 
     @OneToMany(
             targetEntity = Image.class,
-            mappedBy = "post",
+//            mappedBy = "post",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
-    @JsonBackReference //순환참조 방지
+//    @JsonBackReference //순환참조 방지
     private List<Image> images; // 이미지
 
     @OneToMany(

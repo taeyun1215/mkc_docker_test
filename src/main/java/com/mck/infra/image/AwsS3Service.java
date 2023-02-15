@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AwsS3Service {
 
@@ -29,13 +31,12 @@ public class AwsS3Service {
     private String bucket;
 
     private final AmazonS3 amazonS3;
-    private final FileService fileService;
     private final ImageRepo imageRepo;
 
     private static final String IMAGE_URL_PREFIX = "https://yeh-bucket.s3.ap-northeast-2.amazonaws.com/";
 
-    public List<String> uploadFile(Post post, List<MultipartFile> multipartFile) {
-        List<String> fileNameList = new ArrayList<>();
+    public List<Image> uploadFile(Post post, List<MultipartFile> multipartFile) {
+        List<Image> images = new ArrayList<>();
 
         // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가
         multipartFile.forEach(file -> {
@@ -52,10 +53,11 @@ public class AwsS3Service {
                     .imageName(fileName)
                     .imageUrl(imageUrl)
                     .originalImageName(originalFilename)
-                    .post(post)
+//                    .post(post)
                     .build();
 
-            imageRepo.save(image);
+            Image saveImage = imageRepo.save(image);
+            images.add(saveImage);
 
             try(InputStream inputStream = file.getInputStream()) {
                 amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
@@ -64,10 +66,9 @@ public class AwsS3Service {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
             }
 
-            fileNameList.add(fileName);
         });
 
-        return fileNameList;
+        return images;
     }
 
     public void deleteFile(String fileName) {

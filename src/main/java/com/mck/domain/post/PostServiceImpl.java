@@ -33,7 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepo postLikeRepo;
 
     private final ImageService imageService;
-    private final AwsS3Service awsS3Service;
+        private final AwsS3Service awsS3Service;
 
     @Override
     @Transactional
@@ -68,9 +68,9 @@ public class PostServiceImpl implements PostService {
 //            log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
 //
 //            savePost.setImages(saveImageFiles);
-            awsS3Service.uploadFile(post, postDto.getImageFiles());
+            List<Image> images = awsS3Service.uploadFile(post, postDto.getImageFiles());
+            savePost.setImages(images);
         }
-
         return savePost;
     }
 
@@ -87,7 +87,7 @@ public class PostServiceImpl implements PostService {
         Optional<Post> findPost = postRepo.findById(postId);
         List<MultipartFile> imageFiles = postDto.getImageFiles();
 
-        imageService.updateImage(imageFiles, findPost.get());
+//        imageService.updateImage(imageFiles, findPost.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
     }
@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
         validateDeletePost(postId, findUser);  // 유효성 검사
         Optional<Post> findPost = postRepo.findById(postId);
 
-        imageService.deleteImage(findPost.get());
+//        imageService.deleteImage(findPost.get());
         log.info("로컬에 이미지를 삭제했습니다 : ", findPost.get().getImages());
 
         postRepo.delete(findPost.get());
