@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.user.UserRepo;
+import com.mck.global.utils.CommonUtil;
 import com.mck.global.utils.ErrorObject;
 import com.mck.global.utils.ReturnObject;
 import lombok.extern.slf4j.Slf4j;
@@ -60,40 +61,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        // 토큰 서명용 키 생성
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        // 최초 접속시 발급하는 토큰
-        String access_token = JWT.create()
-                // 토큰 이름
-                .withSubject(user.getUsername())
-                // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                // .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 1000))
-                // 토큰 발행자
-                .withIssuer(request.getRequestURI().toString())
-                // 토큰 payload 작성
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                // 토큰 서명
-                .sign(algorithm);
 
-        // access_token을 재발급 받을 수 있는 토큰
-        String refresh_token = JWT.create()
-                // 토큰 이름
-                .withSubject(user.getUsername())
-                // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 120 * 60 * 1000))
-                // 토큰 발행자
-                .withIssuer(request.getRequestURI().toString())
-                // 토큰 서명
-                .sign(algorithm);
+        com.mck.domain.user.User user_domain = new com.mck.domain.user.User();
+        user_domain.setUsername(user.getUsername());
+        user_domain.setPassword(user.getPassword());
 
-        com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername());
+        Map<String, Object> token = CommonUtil.getToken(user_domain, request);
 
-        Map<String, Object> body = new HashMap<>();
-        Map<String, String> token = new HashMap<>();
-        token.put("access_token", access_token);
-        token.put("refresh_token", refresh_token);
-        token.put("emailVerified", String.valueOf(userDetail.isEmailVerified()));
+        com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername()).get();
+
+        token.put("emailVerified", userDetail.isEmailVerified());
         token.put("nickname", userDetail.getNickname());
         response.setContentType(APPLICATION_JSON_VALUE);
 

@@ -20,10 +20,6 @@ import java.util.Map;
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
-    ReturnObject returnObject;
-    ErrorObject errorObject;
-    ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
@@ -34,6 +30,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     }
 
     public void setErrorResponse(HttpServletRequest req, HttpServletResponse res, Throwable ex) throws IOException {
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

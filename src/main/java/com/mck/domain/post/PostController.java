@@ -2,6 +2,7 @@ package com.mck.domain.post;
 
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
+import com.mck.global.utils.ErrorObject;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,20 +92,21 @@ public class PostController {
             @AuthenticationPrincipal String username
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-        if (bindingResult.hasErrors()) {
-            ReturnObject object = ReturnObject.builder()
-                    .build();
 
-            return ResponseEntity.badRequest().body(object);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        if (bindingResult.hasErrors()) {
+            errorObject = ErrorObject.builder().code(bindingResult.getFieldError().getCode()).message(bindingResult.getFieldError().getDefaultMessage()).build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
         } else {
             User user = userService.getUser(username);
             Post post = postService.savePost(postDto, user);
+            returnObject = ReturnObject.builder().success(true).data(post).build();
 
-            ReturnObject object = ReturnObject.builder()
-                    .data(post)
-                    .build();
-
-            return ResponseEntity.created(uri).body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 

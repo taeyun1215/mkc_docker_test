@@ -9,6 +9,7 @@ import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mck.global.utils.CommonUtil.getRandomNumber;
-import static com.mck.global.utils.CommonUtil.getUsernameFromToken;
 
 @RestController
 @RequestMapping("/email")
@@ -39,10 +39,8 @@ public class EmailController {
     private final UserService userService;
 
     @PostMapping("/certify-regis")
-    public ResponseEntity<ReturnObject> certifyUser(HttpServletRequest request){
+    public ResponseEntity<ReturnObject> certifyUser(@AuthenticationPrincipal String username, HttpServletRequest request){
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/email/certify-regis").toUriString());
-
-        String username = getUsernameFromToken(request);
 
         if (username == null) {
             ErrorObject error = ErrorObject.builder().message("유저 정보가 없습니다.").code("notfound_user").build();

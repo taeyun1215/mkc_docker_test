@@ -9,6 +9,7 @@ import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
+import com.mck.global.utils.CommonUtil;
 import com.mck.global.utils.ErrorObject;
 import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
@@ -21,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -51,6 +53,7 @@ public class UserController {
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
     private final TemplateEngine templateEngine;
+    private final CommonUtil commonUtil;
 
     @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -85,7 +88,7 @@ public class UserController {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
 
-            Map<String, String> token = getToken(user, request);
+            Map<String, Object> token = commonUtil.getToken(user, request);
 
             returnObject = ReturnObject.builder().success(true).data(token).build();
 
@@ -120,7 +123,7 @@ public class UserController {
                 String username = decodedJWT.getSubject();
                 User user = userService.getUser(username);
 
-                Map<String, String> token = getToken(user, request);
+                Map<String, Object> token = commonUtil.getToken(user, request);
 
                 returnObject = ReturnObject.builder().success(true).data(token).build();
 
@@ -245,38 +248,8 @@ public class UserController {
         }
     }
 
-    private Map<String, String> getToken(User user, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-
-        // 토큰 서명용 키 생성
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        // 최초 접속시 발급하는 토큰
-        String access_token = JWT.create()
-                // 토큰 이름
-                .withSubject(user.getUsername())
-                // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                // 토큰 발행자
-                .withIssuer(request.getRequestURI().toString())
-                // 토큰 payload 작성
-                .withClaim("roles", authenticationToken.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                // 토큰 서명
-                .sign(algorithm);
-
-        // access_token을 재발급 받을 수 있는 토큰
-        String refresh_token = JWT.create()
-                // 토큰 이름
-                .withSubject(user.getUsername())
-                // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 120 * 60 * 1000))
-                // 토큰 발행자
-                .withIssuer(request.getRequestURI().toString())
-                // 토큰 서명
-                .sign(algorithm);
-
-        Map<String, String> token = new HashMap<>();
-        token.put("access_token", access_token);
-        token.put("refresh_token", refresh_token);
-        return token;
+    @PutMapping("/user")
+    public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username){
+        return null;
     }
 }

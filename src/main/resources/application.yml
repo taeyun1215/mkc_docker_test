@@ -43,7 +43,7 @@ spring:
 
   redis:
     port: 6379
-    host: 127.0.0.1
+    host: 39.117.201.199
     username: root
     password: 3iZXb4AK5dH5
 
@@ -51,6 +51,11 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+property:
+  secretKey: pvxmdnogszqqakzssfvvivldk
+  tokenExpiresTime: 60
+  refreshTokenExpiresTime: 120
 
 cloud:
   aws:
@@ -63,9 +68,3 @@ cloud:
       bucket: yeh-bucket
     stack:
       auto: false
-
-file:
-  upload:
-    path: /
-# todo : aws s3 버켓에 추가하기
-# todo : cloudflare 라이브러리 다운 받고 추가하기

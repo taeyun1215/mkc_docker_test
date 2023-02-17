@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()) // 커스텀 엑세스 거부 핸들러 적용
                 .authenticationEntryPoint(authenticationEntryPoint()); // 커스텀 인증 엔트리 포인트 적용
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**", "/api/check-email-code", "/api/user", "/post/**", "/api/username").permitAll();
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**", "/api/check-email-code*", "/api/user", "/post/**", "/api/username").permitAll();
         http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
         // http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();

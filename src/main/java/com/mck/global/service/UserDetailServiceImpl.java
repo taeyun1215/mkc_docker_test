@@ -25,7 +25,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     // 해당 회원이 존재하는지 여부 체크
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username);
+        User user = userRepo.findByUsername(username).get();
         if (user == null){
             log.error("해당 유저 정보를 찾을 수 없습니다");
             throw new UsernameNotFoundException("해당 유저 정보를 찾을 수 없습니다");
