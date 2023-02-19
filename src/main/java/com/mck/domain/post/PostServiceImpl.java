@@ -64,10 +64,6 @@ public class PostServiceImpl implements PostService {
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
         if (postDto.getImageFiles() != null) {
-//            List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
-//            log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
-//
-//            savePost.setImages(saveImageFiles);
             List<Image> images = awsS3Service.uploadFile(post, postDto.getImageFiles());
             savePost.setImages(images);
         }
@@ -111,13 +107,19 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         validateDeletePost(postId, findUser);  // 유효성 검사
-        Optional<Post> findPost = postRepo.findById(postId);
 
-//        imageService.deleteImage(findPost.get());
-        log.info("로컬에 이미지를 삭제했습니다 : ", findPost.get().getImages());
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        postRepo.delete(findPost.get());
-        log.info("게시글을 삭제하였습니다 : ", findPost.get().getTitle());
+        List<Image> images = findPost.getImages();
+        images.forEach( image -> {
+            awsS3Service.deleteFile(image.getImageName());
+        });
+
+        log.info("로컬에 이미지를 삭제했습니다 : ", findPost.getImages());
+
+        postRepo.delete(findPost);
+        log.info("게시글을 삭제하였습니다 : ", findPost.getTitle());
 
     }
 

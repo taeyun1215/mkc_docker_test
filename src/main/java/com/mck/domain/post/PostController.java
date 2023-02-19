@@ -91,7 +91,6 @@ public class PostController {
             BindingResult bindingResult,
             @AuthenticationPrincipal String username
     ) throws IOException {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
 
         ReturnObject returnObject;
         ErrorObject errorObject;
@@ -143,14 +142,14 @@ public class PostController {
             @AuthenticationPrincipal String username
     ) throws IOException {
 
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
         User user = userService.getUser(username);
         postService.deletePost(postId, user);
+        returnObject = ReturnObject.builder().success(true).data("삭제가 완료되었습니다.").build();
 
-        ReturnObject object = ReturnObject.builder()
-                .build();
-
-        return ResponseEntity.ok().body(object);
-
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 좋아요
