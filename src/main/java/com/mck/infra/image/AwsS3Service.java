@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mck.domain.image.Image;
 import com.mck.domain.image.ImageRepo;
 import com.mck.domain.post.Post;
+import com.mck.domain.post.request.PostDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AwsS3Service {
 
@@ -35,6 +37,7 @@ public class AwsS3Service {
 
     private static final String IMAGE_URL_PREFIX = "https://yeh-bucket.s3.ap-northeast-2.amazonaws.com/";
 
+    @Transactional
     public List<Image> uploadFile(Post post, List<MultipartFile> multipartFile) {
         List<Image> images = new ArrayList<>();
 
@@ -71,10 +74,19 @@ public class AwsS3Service {
         return images;
     }
 
-    public void updateFile(Post post, String fileName) {
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    @Transactional
+    public void updateFile(Post post, List<Image> images, PostDto postDto) {
+        images.forEach(image -> {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageName()));
+            imageRepo.delete(image);
+        });
+
+        if (postDto.getImageFiles().size() > 0 && !Objects.equals(postDto.getImageFiles().get(0).getOriginalFilename(), "")) {
+            uploadFile(post, postDto.getImageFiles());
+        }
     }
 
+    @Transactional
     public void deleteFile(String fileName) {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }

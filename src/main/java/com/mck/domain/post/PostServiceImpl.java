@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -66,7 +67,8 @@ public class PostServiceImpl implements PostService {
         Post post = postDto.toEntity(findUser);
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
-        if (postDto.getImageFiles() != null) {
+
+        if (postDto.getImageFiles().size() > 0 && !Objects.equals(postDto.getImageFiles().get(0).getOriginalFilename(), "")) {
             List<Image> images = awsS3Service.uploadFile(post, postDto.getImageFiles());
             savePost.setImages(images);
         }
@@ -85,6 +87,8 @@ public class PostServiceImpl implements PostService {
         validateEditPost(postId, findUser); // 유효성 검사
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
         log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
+
+        awsS3Service.updateFile(findPost, findPost.getImages(), postDto);
 
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 

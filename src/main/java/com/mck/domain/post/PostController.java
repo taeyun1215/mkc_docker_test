@@ -1,7 +1,7 @@
 package com.mck.domain.post;
 
 import com.mck.domain.post.request.PostDto;
-import com.mck.domain.post.response.PostCreateResponse;
+import com.mck.domain.post.response.PostViewResponse;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
 import com.mck.global.utils.ErrorObject;
@@ -102,7 +102,7 @@ public class PostController {
         } else {
             User user = userService.getUser(username);
             Post post = postService.savePost(postDto, user);
-            PostCreateResponse response = PostCreateResponse.from(post);
+            PostViewResponse response = PostViewResponse.from(post);
             returnObject = ReturnObject.builder().success(true).data(response).build();
 
             return ResponseEntity.ok().body(returnObject);
@@ -118,20 +118,20 @@ public class PostController {
             @AuthenticationPrincipal String username
     ) throws IOException {
 
-        User user = userService.getUser(username);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
         if (bindingResult.hasErrors()) {
-            ReturnObject object = ReturnObject.builder()
-                    .build();
+            errorObject = ErrorObject.builder().code(bindingResult.getFieldError().getCode()).message(bindingResult.getFieldError().getDefaultMessage()).build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         } else {
+            User user = userService.getUser(username);
             postService.editPost(postId, postDto, user);
+            returnObject = ReturnObject.builder().success(true).data("수정이 완료되었습니다.").build();
 
-            ReturnObject object = ReturnObject.builder()
-                    .build();
-
-            return ResponseEntity.ok().body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 

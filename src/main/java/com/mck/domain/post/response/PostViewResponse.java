@@ -3,16 +3,14 @@ package com.mck.domain.post.response;
 import com.mck.domain.comment.Comment;
 import com.mck.domain.image.Image;
 import com.mck.domain.post.Post;
-import com.mck.domain.postlike.PostLike;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class PostCreateResponse {
+public class PostViewResponse {
 
     private Long id;
     private String title;
@@ -23,8 +21,8 @@ public class PostCreateResponse {
     private List<Comment> comments;
     private int likes;
 
-    public static PostCreateResponse from(Post post) {
-        return PostCreateResponse.builder()
+    public static PostViewResponse from(Post post) {
+        return PostViewResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
