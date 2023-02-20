@@ -1,7 +1,9 @@
 package com.mck.domain.post;
 
 import com.mck.domain.image.Image;
+import com.mck.domain.image.ImageRepo;
 import com.mck.domain.image.ImageService;
+import com.mck.domain.post.request.PostDto;
 import com.mck.domain.postlike.PostLike;
 import com.mck.domain.postlike.PostLikeRepo;
 import com.mck.domain.user.User;
@@ -31,6 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepo postRepo;
     private final UserRepo userRepo;
     private final PostLikeRepo postLikeRepo;
+    private final ImageRepo imageRepo;
 
     private final ImageService imageService;
         private final AwsS3Service awsS3Service;
@@ -76,14 +79,13 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
         validateEditPost(postId, findUser); // 유효성 검사
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
         log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
 
-        Optional<Post> findPost = postRepo.findById(postId);
-        List<MultipartFile> imageFiles = postDto.getImageFiles();
-
-//        imageService.updateImage(imageFiles, findPost.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
     }

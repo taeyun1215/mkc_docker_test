@@ -53,7 +53,7 @@ public class AwsS3Service {
                     .imageName(fileName)
                     .imageUrl(imageUrl)
                     .originalImageName(originalFilename)
-//                    .post(post)
+                    .post(post)
                     .build();
 
             Image saveImage = imageRepo.save(image);
@@ -69,6 +69,10 @@ public class AwsS3Service {
         });
 
         return images;
+    }
+
+    public void updateFile(Post post, String fileName) {
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
     public void deleteFile(String fileName) {

@@ -1,5 +1,6 @@
-package com.mck.domain.post;
+package com.mck.domain.post.request;
 
+import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

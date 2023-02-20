@@ -1,12 +1,13 @@
 package com.mck.domain.post;
 
+import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.response.PostCreateResponse;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
 import com.mck.global.utils.ErrorObject;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.buf.UEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,10 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -103,7 +102,8 @@ public class PostController {
         } else {
             User user = userService.getUser(username);
             Post post = postService.savePost(postDto, user);
-            returnObject = ReturnObject.builder().success(true).data(post).build();
+            PostCreateResponse response = PostCreateResponse.from(post);
+            returnObject = ReturnObject.builder().success(true).data(response).build();
 
             return ResponseEntity.ok().body(returnObject);
         }

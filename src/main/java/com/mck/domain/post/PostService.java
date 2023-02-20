@@ -1,5 +1,6 @@
 package com.mck.domain.post;
 
+import com.mck.domain.post.request.PostDto;
 import com.mck.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

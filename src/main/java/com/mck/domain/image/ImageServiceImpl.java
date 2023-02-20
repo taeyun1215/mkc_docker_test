@@ -24,40 +24,40 @@ public class ImageServiceImpl implements ImageService {
     private final FileService fileService;
     private final String IMAGE_URL_PREFIX = "/images/";
 
-    // 여러 파일을 나눠서 저장하기 위한 메소드.
-    @Override
-    @Transactional
-    public List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException {
-        List<Image> saveImageFiles = new ArrayList<>();
+//    // 여러 파일을 나눠서 저장하기 위한 메소드.
+//    @Override
+//    @Transactional
+//    public List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException {
+//        List<Image> saveImageFiles = new ArrayList<>();
+//
+//        for (MultipartFile imageFile : imageFiles) {
+//            Image saveImageFile = saveImage(post, imageFile);
+//            saveImageFiles.add(saveImageFile);
+//        }
+//
+//        return saveImageFiles;
+//    }
 
-        for (MultipartFile imageFile : imageFiles) {
-            Image saveImageFile = saveImage(post, imageFile);
-            saveImageFiles.add(saveImageFile);
-        }
-
-        return saveImageFiles;
-    }
-
-    // 하나씩 파일을 나눠서 저장함.
-    @Transactional
-    public Image saveImage(Post post, MultipartFile imageFile) throws IOException {
-
-        // fileService 에서 다 처리 해 뒀습니다.
-        UploadFile uploadFile = fileService.storeFile(imageFile);
-        String storeFileName = uploadFile != null ? uploadFile.getStoreFileName() : "";
-        String originalFilename = uploadFile != null ? uploadFile.getOriginalFileName() : "";
-        String imageUrl = uploadFile != null ? IMAGE_URL_PREFIX + storeFileName : "";
-
-        Image image = Image.builder()
-                .imageName(storeFileName)
-                .imageUrl(imageUrl)
-                .originalImageName(originalFilename)
+//    // 하나씩 파일을 나눠서 저장함.
+//    @Transactional
+//    public Image saveImage(Post post, MultipartFile imageFile) throws IOException {
+//
+//        // fileService 에서 다 처리 해 뒀습니다.
+//        UploadFile uploadFile = fileService.storeFile(imageFile);
+//        String storeFileName = uploadFile != null ? uploadFile.getStoreFileName() : "";
+//        String originalFilename = uploadFile != null ? uploadFile.getOriginalFileName() : "";
+//        String imageUrl = uploadFile != null ? IMAGE_URL_PREFIX + storeFileName : "";
+//
+//        Image image = Image.builder()
+//                .imageName(storeFileName)
+//                .imageUrl(imageUrl)
+//                .originalImageName(originalFilename)
 //                .post(post)
-                .build();
-
-        Image saveImage = imageRepo.save(image);
-        return saveImage;
-    }
+//                .build();
+//
+//        Image saveImage = imageRepo.save(image);
+//        return saveImage;
+//    }
 //
 //    // 이미지 순번대로 반환해주는 JPA
 //    public List<Image> findByPostOrderByImageIdAsc(Post post) {

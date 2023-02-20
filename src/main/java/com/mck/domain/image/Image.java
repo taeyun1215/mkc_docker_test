@@ -1,5 +1,6 @@
 package com.mck.domain.image;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mck.domain.post.Post;
 import lombok.*;
@@ -37,11 +38,11 @@ public class Image {
     )
     private String imageUrl; // 이미지 조회 경로
 
-//    @ManyToOne(
-//            targetEntity = Post.class,
-//            fetch = FetchType.LAZY
-//    ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
-//    @JsonManagedReference // 순환참조 방지
-//    private Post post;
+    @ManyToOne(
+            targetEntity = Post.class,
+            fetch = FetchType.LAZY
+    ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
+    @JsonManagedReference // 순환참조 방지
+    public Post post;
 
 }

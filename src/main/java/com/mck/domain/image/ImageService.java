@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface ImageService {
     // DB에 이미지 저장.
-    List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException;
+//    List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException;
 //
 //    // 이미지 순번대로 반환해주는 JPA
 //    List<Image> findByPostOrderByImageIdAsc(Post post);
