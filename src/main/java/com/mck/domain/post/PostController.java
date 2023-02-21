@@ -2,6 +2,7 @@ package com.mck.domain.post;
 
 import com.mck.domain.image.response.ImageViewResponse;
 import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.response.PostPagingResponse;
 import com.mck.domain.post.response.PostViewResponse;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
@@ -39,13 +40,13 @@ public class PostController {
     public ResponseEntity<ReturnObject> pagingPost(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        ReturnObject returnObject;
+
         Page<Post> posts = postService.pagePostList(pageable);
+        PostPagingResponse response = PostPagingResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(response).build();
 
-        ReturnObject object = ReturnObject.builder()
-                .data(posts)
-                .build();
-
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 검색

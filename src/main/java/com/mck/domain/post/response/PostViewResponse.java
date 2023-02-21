@@ -27,7 +27,6 @@ public class PostViewResponse {
     public static PostViewResponse from(Post post, List<ImageViewResponse> imageViewResponse, String seeUsername) {
 
         boolean writeStatus;
-        User user = post.getUser();
 
         if (post.getUser().getUsername() == seeUsername) writeStatus = true;
         else writeStatus = false;
@@ -39,6 +38,18 @@ public class PostViewResponse {
                 .writer(post.getWriter())
                 .view(post.getView())
                 .writeStatus(writeStatus)
+                .images(imageViewResponse)
+                .comments(post.getComments())
+                .build();
+    }
+
+    public static PostViewResponse from(Post post, List<ImageViewResponse> imageViewResponse) {
+
+        return PostViewResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .view(post.getView())
                 .images(imageViewResponse)
                 .comments(post.getComments())
                 .build();
