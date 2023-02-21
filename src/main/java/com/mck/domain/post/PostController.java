@@ -100,9 +100,10 @@ public class PostController {
             httpServletResponse.addCookie(newCookie);
         }
 
+        User user = userService.getUser(username);
         Post post = postService.viewDetailPost(postId);
         List<ImageViewResponse> imageViewResponse = ImageViewResponse.from(post.getImages());
-        PostViewResponse response = PostViewResponse.from(post, imageViewResponse, username);
+        PostViewResponse response = PostViewResponse.from(post, imageViewResponse, user.getUsername());
         returnObject = ReturnObject.builder().success(true).data(response).build();
 
         return ResponseEntity.ok().body(returnObject);
