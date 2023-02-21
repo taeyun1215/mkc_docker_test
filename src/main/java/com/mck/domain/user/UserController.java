@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,6 +49,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api")
 @Slf4j
 public class UserController {
+
+    @Value("${property.secretKey}")
+    private String secretKey;
 
     private final UserService userService;
     private final EmailService emailService;
@@ -115,7 +119,7 @@ public class UserController {
             try {
                 // 토크만 추출 하도록 type부분 제거
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
                 // JWT 검증용 객체 생성(토큰 생성할때와 동일한 알고리즘 적용)
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 // 토큰 검증

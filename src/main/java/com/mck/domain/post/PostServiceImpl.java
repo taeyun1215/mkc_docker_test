@@ -72,6 +72,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         Post post = postDto.toEntity(findUser);
+        User saUser = post.getUser();
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
 
