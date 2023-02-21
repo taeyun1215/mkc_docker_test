@@ -47,6 +47,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public Post viewDetailPost(Long postId) {
+        return postRepo.findById(postId).get();
+
+    }
+
+    @Override
+    @Transactional
     public Page<Post> searchPost(String keyword, Pageable pageable) {
         return null; // postRepo.findAllSearch(keyword, pageable);
     }
@@ -112,10 +119,10 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        validateDeletePost(postId, findUser);  // 유효성 검사
-
         Post findPost = postRepo.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
+        validateDeletePost(postId, findUser);  // 유효성 검사
 
         List<Image> images = findPost.getImages();
         images.forEach( image -> {
@@ -169,13 +176,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post updateViewPost(Long postId) {
+    public void updateViewPost(Long postId) {
         Post findPost = postRepo.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
         postRepo.updateView(findPost.getId());
         log.info("게시글을 조회했습니다.");
-        return findPost;
     }
 
 

@@ -2,6 +2,7 @@ package com.mck.domain.post.response;
 
 import com.mck.domain.comment.Comment;
 import com.mck.domain.image.Image;
+import com.mck.domain.image.response.ImageViewResponse;
 import com.mck.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,18 +18,20 @@ public class PostViewResponse {
     private String content;
     private String writer;
     private int view;
-    private List<Image> images;
+    private String seeUsername;
+    private List<ImageViewResponse> images;
     private List<Comment> comments;
     private int likes;
 
-    public static PostViewResponse from(Post post) {
+    public static PostViewResponse from(Post post, List<ImageViewResponse> imageViewResponse, String seeUsername) {
         return PostViewResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .writer(post.getWriter())
                 .view(post.getView())
-                .images(post.getImages())
+                .seeUsername(seeUsername)
+                .images(imageViewResponse)
                 .comments(post.getComments())
                 .build();
     }

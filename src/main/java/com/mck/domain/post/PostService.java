@@ -17,6 +17,9 @@ public interface PostService {
     // 게시글 Paging
     Page<Post> pagePostList(Pageable pageable);
 
+    // 게시글 디테일
+    Post viewDetailPost(Long postId);
+
     // 게시글 검색
     Page<Post> searchPost(String keyword, Pageable pageable);
 
@@ -36,7 +39,7 @@ public interface PostService {
     void likePost(Long postId, User user);
 
     // 게시글 조회수
-    Post updateViewPost(Long postId);
+    void updateViewPost(Long postId);
 
 
 }

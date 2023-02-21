@@ -1,5 +1,6 @@
 package com.mck.domain.post;
 
+import com.mck.domain.image.response.ImageViewResponse;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.post.response.PostViewResponse;
 import com.mck.domain.user.User;
@@ -18,7 +19,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,29 +63,49 @@ public class PostController {
         return ResponseEntity.ok().body(object);
     }
 
-    // 게시글 상세 정보 // todo : 쿠키나 세션을 이용하여 조회수 중복 카운터를 방지하기
+    // 게시글 상세 정보
     @GetMapping("/read/{post_id}")
     public ResponseEntity<ReturnObject> readPost(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal String username
+            @AuthenticationPrincipal String username,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
     ) {
-        User user = userService.getUser(username);
-        Post post = postService.updateViewPost(postId);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
-        // 자기가 쓴 게시물을 자기가 본다면 수정, 삭제를 할 수 있게 해주는 부분.
-        if (post.getUser().getId().equals(user.getId())) {
-            ReturnObject object = ReturnObject.builder()
-                    .data(post) // todo : writer = true 로 두고 싶음.
-                    .build();
-
-            return ResponseEntity.ok().body(object);
+        Cookie oldCookie = null;
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
         }
 
-        ReturnObject object = ReturnObject.builder()
-                .data(post)
-                .build();
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
+                postService.updateViewPost(postId);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                httpServletResponse.addCookie(oldCookie);
+            }
+        } else {
+            postService.updateViewPost(postId);
+            Cookie newCookie = new Cookie("postView","[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            httpServletResponse.addCookie(newCookie);
+        }
 
-        return ResponseEntity.ok().body(object);
+        Post post = postService.viewDetailPost(postId);
+        List<ImageViewResponse> imageViewResponse = ImageViewResponse.from(post.getImages());
+        PostViewResponse response = PostViewResponse.from(post, imageViewResponse, username);
+        returnObject = ReturnObject.builder().success(true).data(response).build();
+
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 추가
@@ -101,9 +126,8 @@ public class PostController {
             return ResponseEntity.ok().body(returnObject);
         } else {
             User user = userService.getUser(username);
-            Post post = postService.savePost(postDto, user);
-            PostViewResponse response = PostViewResponse.from(post);
-            returnObject = ReturnObject.builder().success(true).data(response).build();
+            postService.savePost(postDto, user);
+            returnObject = ReturnObject.builder().success(true).data("등록이 완료되었습니다.").build();
 
             return ResponseEntity.ok().body(returnObject);
         }
