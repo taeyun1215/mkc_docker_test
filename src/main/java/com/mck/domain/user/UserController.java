@@ -8,21 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
-
 import com.mck.global.utils.CommonUtil;
 import com.mck.global.utils.ErrorObject;
-import com.mck.infra.mail.EmailMessage;
-import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
+import com.mck.infra.mail.EmailMessage;
+import com.mck.infra.mail.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -37,11 +33,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -136,7 +132,7 @@ public class UserController {
                 new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
+                response.setStatus(OK.value());
                 // response.sendError(FORBIDDEN.value());
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", e.getMessage());
