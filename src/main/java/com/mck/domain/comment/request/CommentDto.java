@@ -1,5 +1,6 @@
-package com.mck.domain.comment;
+package com.mck.domain.comment.request;
 
+import com.mck.domain.comment.Comment;
 import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
 import lombok.*;

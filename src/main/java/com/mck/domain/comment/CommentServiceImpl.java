@@ -1,5 +1,6 @@
 package com.mck.domain.comment;
 
+import com.mck.domain.comment.request.CommentDto;
 import com.mck.domain.post.Post;
 import com.mck.domain.post.PostRepo;
 import com.mck.domain.user.User;
@@ -60,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Comment saveComment(Long postId, User user, CommentDto commentDto) {
+    public void saveComment(Long postId, User user, CommentDto commentDto) {
 
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
@@ -73,12 +74,11 @@ public class CommentServiceImpl implements CommentService {
 
         log.info("새로운 댓글 정보를 DB에 저장했습니다 : ", saveComment.getId());
 
-        return saveComment;
     }
 
     @Override
     @Transactional
-    public Comment saveReComment(Long postId, Long commentId, User user, CommentDto reCommentDto) {
+    public void saveReComment(Long postId, Long commentId, User user, CommentDto reCommentDto) {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
@@ -89,7 +89,6 @@ public class CommentServiceImpl implements CommentService {
         Comment saveComment = commentRepo.save(reComment);
         log.info("새로운 대댓글 정보를 DB에 저장했습니다 : ", saveComment.getId());
 
-        return saveComment;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.mck.domain.image;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mck.domain.post.Post;
 import lombok.*;

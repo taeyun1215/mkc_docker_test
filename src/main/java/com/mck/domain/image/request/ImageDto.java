@@ -1,5 +1,6 @@
-package com.mck.domain.image;
+package com.mck.domain.image.request;
 
+import com.mck.domain.image.Image;
 import com.mck.domain.post.Post;
 import lombok.*;
 

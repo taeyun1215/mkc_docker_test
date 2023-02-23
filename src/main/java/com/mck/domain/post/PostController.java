@@ -1,6 +1,6 @@
 package com.mck.domain.post;
 
-import com.mck.domain.image.response.ImageViewResponse;
+import com.mck.domain.image.response.ImagePostDetailViewResponse;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.post.response.PostPagingResponse;
 import com.mck.domain.post.response.PostDetailViewResponse;
@@ -103,8 +103,8 @@ public class PostController {
 
         User user = userService.getUser(username);
         Post post = postService.viewDetailPost(postId);
-        List<ImageViewResponse> imageViewResponse = ImageViewResponse.from(post.getImages());
-        PostDetailViewResponse response = PostDetailViewResponse.from(post, imageViewResponse, user.getUsername());
+        List<ImagePostDetailViewResponse> imagePostDetailViewResponse = ImagePostDetailViewResponse.from(post.getImages());
+        PostDetailViewResponse response = PostDetailViewResponse.from(post, imagePostDetailViewResponse, user.getUsername());
         returnObject = ReturnObject.builder().success(true).data(response).build();
 
         return ResponseEntity.ok().body(returnObject);
@@ -129,7 +129,7 @@ public class PostController {
         } else {
             User user = userService.getUser(username);
             postService.savePost(postDto, user);
-            returnObject = ReturnObject.builder().success(true).data("등록이 완료되었습니다.").build();
+            returnObject = ReturnObject.builder().success(true).data("게시글 등록이 완료되었습니다.").build();
 
             return ResponseEntity.ok().body(returnObject);
         }
@@ -185,13 +185,15 @@ public class PostController {
             @AuthenticationPrincipal String username
     ) {
 
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
         User user = userService.getUser(username);
-        postService.likePost(postId, user);
+        String description = postService.likePost(postId, user);
 
-        ReturnObject object = ReturnObject.builder()
-                .build();
+        returnObject = ReturnObject.builder().success(true).data(description).build();
 
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
     }
 
 }

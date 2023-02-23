@@ -1,6 +1,5 @@
 package com.mck.domain.comment;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mck.domain.base.BaseEntity;
 import com.mck.domain.post.Post;

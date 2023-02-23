@@ -1,13 +1,11 @@
 package com.mck.domain.post.response;
 
-import com.mck.domain.comment.Comment;
+import com.mck.domain.comment.response.CommentPostPagingResponse;
 import com.mck.domain.image.response.ImagePostPagingResponse;
-import com.mck.domain.image.response.ImageViewResponse;
 import com.mck.domain.post.Post;
+import com.mck.domain.postlike.response.PostLikePostPagingResponse;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -20,18 +18,23 @@ public class PostAllViewResponse {
     private int view;
     private boolean writeStatus;
     private ImagePostPagingResponse image;
-    private List<Comment> comments;
+    private int comments;
     private int likes;
 
-    public static PostAllViewResponse from(Post post, ImagePostPagingResponse imagePostPagingResponse) {
-
+    public static PostAllViewResponse from(
+            Post post,
+            ImagePostPagingResponse imagePostPagingResponse,
+            CommentPostPagingResponse commentPostPagingResponse,
+            PostLikePostPagingResponse postLikePostPagingResponse
+    ) {
         return PostAllViewResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .view(post.getView())
                 .image(imagePostPagingResponse)
-                .comments(post.getComments())
+                .comments(commentPostPagingResponse.getCommentCount())
+                .likes(postLikePostPagingResponse.getPostLikeCount())
                 .build();
     }
 

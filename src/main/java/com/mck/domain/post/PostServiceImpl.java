@@ -17,13 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -151,7 +151,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void likePost(Long postId, User user) {
+    public String likePost(Long postId, User user) {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
@@ -159,10 +159,12 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
         Optional<PostLike> findPostLike = postLikeRepo.findByPostAndUser(findPost, findUser);
+        AtomicReference<String> returnObject = new AtomicReference<>();
 
         findPostLike.ifPresentOrElse(
                 postLike -> {
                     postLikeRepo.delete(postLike);
+                    returnObject.set("좋아요가 삭제되었습니다.");
                 },
                 () -> {
                     PostLike savePostLike = PostLike.builder()
@@ -171,8 +173,11 @@ public class PostServiceImpl implements PostService {
                             .build();
 
                     postLikeRepo.save(savePostLike);
+                    returnObject.set("좋아요가 추가되었습니다.");
                 }
         );
+
+        return returnObject.get();
     }
 
     @Override

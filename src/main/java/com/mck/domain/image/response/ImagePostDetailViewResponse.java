@@ -9,27 +9,27 @@ import java.util.List;
 
 @Getter
 @Builder
-public class ImageViewResponse {
+public class ImagePostDetailViewResponse {
 
     private Long id;
     private String originalImageName;
     private String imageName;
     private String imageUrl;
 
-    public static List<ImageViewResponse> from(List<Image> images) {
-        List<ImageViewResponse> imageViewResponses = new ArrayList<>();
+    public static List<ImagePostDetailViewResponse> from(List<Image> images) {
+        List<ImagePostDetailViewResponse> imagePostDetailViewResponses = new ArrayList<>();
 
         images.forEach(image -> {
-            ImageViewResponse saveImage = ImageViewResponse.builder()
+            ImagePostDetailViewResponse saveImage = ImagePostDetailViewResponse.builder()
                     .id(image.getId())
                     .originalImageName(image.getOriginalImageName())
                     .imageName(image.getImageName())
                     .imageUrl(image.getImageUrl())
                     .build();
 
-            imageViewResponses.add(saveImage);
+            imagePostDetailViewResponses.add(saveImage);
         });
 
-        return imageViewResponses;
+        return imagePostDetailViewResponses;
     }
 }

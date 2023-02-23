@@ -36,7 +36,7 @@ public interface PostService {
     void deletePost(Long postId, User user) throws IOException;
 
     // 게시글 좋아요
-    void likePost(Long postId, User user);
+    String likePost(Long postId, User user);
 
     // 게시글 조회수
     void updateViewPost(Long postId);
