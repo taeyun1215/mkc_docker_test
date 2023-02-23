@@ -3,7 +3,7 @@ package com.mck.domain.post;
 import com.mck.domain.image.response.ImageViewResponse;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.post.response.PostPagingResponse;
-import com.mck.domain.post.response.PostViewResponse;
+import com.mck.domain.post.response.PostDetailViewResponse;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
 import com.mck.global.utils.ErrorObject;
@@ -104,7 +104,7 @@ public class PostController {
         User user = userService.getUser(username);
         Post post = postService.viewDetailPost(postId);
         List<ImageViewResponse> imageViewResponse = ImageViewResponse.from(post.getImages());
-        PostViewResponse response = PostViewResponse.from(post, imageViewResponse, user.getUsername());
+        PostDetailViewResponse response = PostDetailViewResponse.from(post, imageViewResponse, user.getUsername());
         returnObject = ReturnObject.builder().success(true).data(response).build();
 
         return ResponseEntity.ok().body(returnObject);

@@ -1,6 +1,6 @@
 package com.mck.domain.post.response;
 
-import com.mck.domain.image.response.ImageViewResponse;
+import com.mck.domain.image.response.ImagePostPagingResponse;
 import com.mck.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,17 +13,22 @@ import java.util.List;
 @Builder
 public class PostPagingResponse {
 
-    private List<PostViewResponse> posts;
+    private List<PostAllViewResponse> posts;
 
     public static PostPagingResponse from(Page<Post> posts) {
 
-        List<PostViewResponse> postList = new ArrayList<>();
+        List<PostAllViewResponse> postList = new ArrayList<>();
 
         posts.forEach(post -> {
-            List<ImageViewResponse> imageViewResponses = ImageViewResponse.from(post.getImages());
-            PostViewResponse postViewResponse = PostViewResponse.from(post, imageViewResponses);
-            postList.add(postViewResponse);
-
+            if (post.getImages().size() != 0) {
+                ImagePostPagingResponse imagePostPagingResponse = ImagePostPagingResponse.from(post.getImages().get(0), post.getImages().size());
+                PostAllViewResponse postAllViewResponse = PostAllViewResponse.from(post, imagePostPagingResponse);
+                postList.add(postAllViewResponse);
+            } else {
+                ImagePostPagingResponse imagePostPagingResponse = ImagePostPagingResponse.from(null, 0);
+                PostAllViewResponse postAllViewResponse = PostAllViewResponse.from(post, imagePostPagingResponse);
+                postList.add(postAllViewResponse);
+            }
         });
 
         return PostPagingResponse.builder()
