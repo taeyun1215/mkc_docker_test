@@ -7,6 +7,8 @@ import com.mck.domain.postlike.response.PostLikePostPagingResponse;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class PostAllViewResponse {
@@ -16,10 +18,10 @@ public class PostAllViewResponse {
     private String content;
     private String writer;
     private int view;
-    private boolean writeStatus;
     private ImagePostPagingResponse image;
     private int comments;
     private int likes;
+    private LocalDateTime createTime;
 
     public static PostAllViewResponse from(
             Post post,
@@ -36,6 +38,7 @@ public class PostAllViewResponse {
                 .image(imagePostPagingResponse)
                 .comments(commentPostPagingResponse.getCommentCount())
                 .likes(postLikePostPagingResponse.getPostLikeCount())
+                .createTime(post.getCreateTime())
                 .build();
     }
 

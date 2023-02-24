@@ -7,6 +7,7 @@ import com.mck.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ public class PostDetailViewResponse {
     private List<ImagePostDetailViewResponse> images;
     private List<CommentPostDetailViewResponse> comments;
     private int likes;
+    private LocalDateTime createTime;
 
     public static PostDetailViewResponse from(Post post, List<ImagePostDetailViewResponse> imagePostDetailViewResponse, String seeUsername) {
 
@@ -52,6 +54,7 @@ public class PostDetailViewResponse {
                 .writeStatus(writeStatus)
                 .images(imagePostDetailViewResponse)
                 .comments(commentPostDetailViewResponses)
+                .createTime(post.getCreateTime())
                 .build();
     }
 

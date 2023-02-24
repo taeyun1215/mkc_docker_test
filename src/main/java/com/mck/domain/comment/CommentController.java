@@ -48,7 +48,6 @@ public class CommentController {
         } else {
             User user = userService.getUser(username);
             commentService.saveComment(postId, user, commentDto);
-
             returnObject = ReturnObject.builder().success(true).data("댓글 등록이 완료되었습니다.").build();
 
             return ResponseEntity.ok().body(returnObject);

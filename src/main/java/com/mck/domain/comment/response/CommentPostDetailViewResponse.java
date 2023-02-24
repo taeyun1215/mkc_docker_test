@@ -4,12 +4,15 @@ import com.mck.domain.comment.Comment;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class CommentPostDetailViewResponse {
 
     private String content;
     private String writer;
+    private LocalDateTime createTime;
 
     public static CommentPostDetailViewResponse form(Comment comment) {
 
@@ -19,6 +22,7 @@ public class CommentPostDetailViewResponse {
             return CommentPostDetailViewResponse.builder()
                     .content(comment.getContent())
                     .writer(comment.getWriter())
+                    .createTime(comment.getCreateTime())
                     .build();
         }
 
