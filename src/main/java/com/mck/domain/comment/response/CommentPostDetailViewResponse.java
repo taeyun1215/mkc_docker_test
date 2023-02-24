@@ -12,11 +12,16 @@ public class CommentPostDetailViewResponse {
     private String writer;
 
     public static CommentPostDetailViewResponse form(Comment comment) {
-        return CommentPostDetailViewResponse.builder()
-                .content(comment.getContent())
-                .content(comment.getWriter())
-                .build();
-    }
 
+        if (comment == null) {
+            return null;
+        } else {
+            return CommentPostDetailViewResponse.builder()
+                    .content(comment.getContent())
+                    .writer(comment.getWriter())
+                    .build();
+        }
+
+    }
 
 }

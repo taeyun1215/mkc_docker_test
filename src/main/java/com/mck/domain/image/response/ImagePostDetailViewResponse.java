@@ -30,6 +30,10 @@ public class ImagePostDetailViewResponse {
             imagePostDetailViewResponses.add(saveImage);
         });
 
+        if (images.size() == 0) {
+            imagePostDetailViewResponses.add(null);
+        }
+
         return imagePostDetailViewResponses;
     }
 }
