@@ -31,6 +31,7 @@ public class PostAllViewResponse {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .writer(post.getWriter())
                 .view(post.getView())
                 .image(imagePostPagingResponse)
                 .comments(commentPostPagingResponse.getCommentCount())
