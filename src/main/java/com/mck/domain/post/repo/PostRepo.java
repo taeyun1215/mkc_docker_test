@@ -1,5 +1,6 @@
-package com.mck.domain.post;
+package com.mck.domain.post.repo;
 
+import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PostRepo extends JpaRepository<Post, Long> {
+public interface PostRepo extends JpaRepository<Post, Long>, PostRepoCustom {
 
     Optional<Post> findById(Long post_id);
     Optional<Post> findByIdAndUser(Long post_id, User user);

@@ -2,7 +2,7 @@ package com.mck.domain.comment;
 
 import com.mck.domain.comment.request.CommentDto;
 import com.mck.domain.post.Post;
-import com.mck.domain.post.PostRepo;
+import com.mck.domain.post.repo.PostRepo;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;

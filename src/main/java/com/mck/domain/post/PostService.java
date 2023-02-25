@@ -42,6 +42,6 @@ public interface PostService {
     void updateViewPost(Long postId);
 
     // 인기 게시글.
-//    List<Post> popularPost();
+    List<Post> popularPost();
 
 }

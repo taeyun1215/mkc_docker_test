@@ -209,17 +209,17 @@ public class PostController {
     }
 
     // 게시글 좋아요
-//    @GetMapping("popular")
-//    public ResponseEntity<ReturnObject> popularPost() {
-//
-//        ReturnObject returnObject;
-//        ErrorObject errorObject;
-//
-//        String description = postService.popularPost();
-//
-//        returnObject = ReturnObject.builder().success(true).data(description).build();
-//
-//        return ResponseEntity.ok().body(returnObject);
-//    }
+    @GetMapping("popular")
+    public ResponseEntity<ReturnObject> popularPost() {
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        List<Post> posts = postService.popularPost();
+
+        returnObject = ReturnObject.builder().success(true).data(posts).build();
+
+        return ResponseEntity.ok().body(returnObject);
+    }
 
 }

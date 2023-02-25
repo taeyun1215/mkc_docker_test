@@ -3,6 +3,7 @@ package com.mck.domain.post;
 import com.mck.domain.image.Image;
 import com.mck.domain.image.ImageRepo;
 import com.mck.domain.image.ImageService;
+import com.mck.domain.post.repo.PostRepo;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.postlike.PostLike;
 import com.mck.domain.postlike.PostLikeRepo;
@@ -190,10 +191,11 @@ public class PostServiceImpl implements PostService {
         log.info("게시글을 조회했습니다.");
     }
 
-//    @Override
-//    @Transactional
-//    public List<Post> popularPost() {
-//
-//    }
+    @Override
+    @Transactional
+    public List<Post> popularPost() {
+        List<Post> posts = postRepo.popularPost();
+        return posts;
+    }
 
 }
