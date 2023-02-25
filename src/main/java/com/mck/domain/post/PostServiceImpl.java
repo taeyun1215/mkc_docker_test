@@ -190,5 +190,10 @@ public class PostServiceImpl implements PostService {
         log.info("게시글을 조회했습니다.");
     }
 
+//    @Override
+//    @Transactional
+//    public List<Post> popularPost() {
+//
+//    }
 
 }
