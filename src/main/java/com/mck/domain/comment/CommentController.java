@@ -24,12 +24,6 @@ public class CommentController {
     private final CommentService commentService;
     private final UserService userService;
 
-    // 게시글에 모든 댓글 불러오기
-    @GetMapping("{post_id}")
-    public ResponseEntity<List<Comment>> getComments(@PathVariable("post_id") Long postId) {
-        return ResponseEntity.ok().body(commentService.getComments(postId));
-    }
-
     // 댓글 추가
     @PostMapping("/new/{post_id}")
     public ResponseEntity<ReturnObject> saveComment(
@@ -121,7 +115,7 @@ public class CommentController {
         User user = userService.getUser(username);
         commentService.deleteComment(commentId, user);
 
-        returnObject = ReturnObject.builder().success(true).data("댓글 삭제기 완료되었습니다.").build();
+        returnObject = ReturnObject.builder().success(true).data("댓글 삭제가 완료되었습니다.").build();
 
         return ResponseEntity.ok().body(returnObject);
     }

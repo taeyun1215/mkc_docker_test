@@ -1,5 +1,8 @@
 package com.mck.domain.post;
 
+import com.mck.domain.comment.Comment;
+import com.mck.domain.comment.CommentService;
+import com.mck.domain.comment.response.CommentPostDetailViewResponse;
 import com.mck.domain.image.response.ImagePostDetailViewResponse;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.post.response.PostPagingResponse;
@@ -34,6 +37,7 @@ public class PostController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentService commentService;
 
     // Paging 게시글, 10개씩.
     @GetMapping("/all")
@@ -103,10 +107,18 @@ public class PostController {
 
         User user = userService.getUser(username);
         Post post = postService.viewDetailPost(postId);
-        List<ImagePostDetailViewResponse> imagePostDetailViewResponse = ImagePostDetailViewResponse.from(post.getImages());
-        PostDetailViewResponse response = PostDetailViewResponse.from(post, imagePostDetailViewResponse, user.getUsername());
-        returnObject = ReturnObject.builder().success(true).data(response).build();
+        List<Comment> comments = commentService.getComments(postId);
 
+        // images response dto
+        List<ImagePostDetailViewResponse> imagePostDetailViewResponse = ImagePostDetailViewResponse.from(post.getImages());
+
+        // comment response dto
+        List<CommentPostDetailViewResponse> commentPostDetailViewResponses = CommentPostDetailViewResponse.form(comments);
+
+        // post response dto
+        PostDetailViewResponse response = PostDetailViewResponse.from(post, imagePostDetailViewResponse, commentPostDetailViewResponses, user.getUsername());
+
+        returnObject = ReturnObject.builder().success(true).data(response).build();
         return ResponseEntity.ok().body(returnObject);
     }
 
@@ -195,5 +207,6 @@ public class PostController {
 
         return ResponseEntity.ok().body(returnObject);
     }
+
 
 }
