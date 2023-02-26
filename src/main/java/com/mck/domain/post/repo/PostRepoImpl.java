@@ -21,9 +21,12 @@ public class PostRepoImpl implements PostRepoCustom {
     public List<Post> popularPost() {
         return jpaQueryFactory
                 .selectFrom(post)
+                .leftJoin(post.likes, postLike)
                 .where(
                         betweenTime(LocalDateTime.now())
                 )
+                .groupBy(post.id)
+                .orderBy(post.id.count().desc(), postLike.id.desc().nullsLast(), post.id.asc())
                 .fetch();
     }
 

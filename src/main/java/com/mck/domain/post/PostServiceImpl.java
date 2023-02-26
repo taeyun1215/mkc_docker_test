@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
     private final ImageRepo imageRepo;
 
     private final ImageService imageService;
-        private final AwsS3Service awsS3Service;
+    private final AwsS3Service awsS3Service;
 
     @Override
     @Transactional
@@ -194,8 +194,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List<Post> popularPost() {
-        List<Post> posts = postRepo.popularPost();
-        return posts;
+        return postRepo.popularPost();
     }
 
 }

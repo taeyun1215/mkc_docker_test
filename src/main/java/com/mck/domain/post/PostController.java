@@ -7,6 +7,7 @@ import com.mck.domain.image.response.ImagePostDetailViewResponse;
 import com.mck.domain.post.request.PostDto;
 import com.mck.domain.post.response.PostPagingResponse;
 import com.mck.domain.post.response.PostDetailViewResponse;
+import com.mck.domain.post.response.PostPopularResponse;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
 import com.mck.global.utils.ErrorObject;
@@ -191,7 +192,7 @@ public class PostController {
     }
 
     // 게시글 좋아요
-    @PostMapping("like/{post_id}")
+    @GetMapping("like/{post_id}")
     public ResponseEntity<ReturnObject> likePost(
             @PathVariable("post_id") Long postId,
             @AuthenticationPrincipal String username
@@ -216,8 +217,8 @@ public class PostController {
         ErrorObject errorObject;
 
         List<Post> posts = postService.popularPost();
-
-        returnObject = ReturnObject.builder().success(true).data(posts).build();
+        List<PostPopularResponse> postPopularResponse = PostPopularResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(postPopularResponse).build();
 
         return ResponseEntity.ok().body(returnObject);
     }
