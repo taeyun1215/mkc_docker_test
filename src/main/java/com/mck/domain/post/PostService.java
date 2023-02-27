@@ -17,14 +17,14 @@ public interface PostService {
     // 게시글 Paging
     Page<Post> pagePostList(Pageable pageable);
 
-    // 게시글 디테일
-    Post viewDetailPost(Long postId);
+    // 게시글 전체 반환
+    List<Post> getPostAll();
 
     // 게시글 검색
     Page<Post> searchPost(String keyword, Pageable pageable);
 
-    // 게시글 전체 반환
-    List<Post> getPostAll();
+    // 게시글 디테일
+    Post viewDetailPost(Long postId);
 
     // 게시글 저장
     Post savePost(PostDto postDto, User user) throws IOException;

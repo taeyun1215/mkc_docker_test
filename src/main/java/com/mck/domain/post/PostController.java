@@ -54,6 +54,16 @@ public class PostController {
         return ResponseEntity.ok().body(returnObject);
     }
 
+    @GetMapping("/allCount")
+    public ResponseEntity<ReturnObject> allCountPost() {
+        ReturnObject returnObject;
+
+        List<Post> posts = postService.getPostAll();
+        returnObject = ReturnObject.builder().success(true).data(posts.size()).build();
+
+        return ResponseEntity.ok().body(returnObject);
+    }
+
     // 게시글 검색
     @PostMapping("search/{keyword}")
     public ResponseEntity<ReturnObject> searchPost(
