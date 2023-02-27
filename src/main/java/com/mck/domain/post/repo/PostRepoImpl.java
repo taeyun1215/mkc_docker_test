@@ -27,6 +27,7 @@ public class PostRepoImpl implements PostRepoCustom {
                 )
                 .groupBy(post.id)
                 .orderBy(post.id.count().desc(), postLike.id.desc().nullsLast(), post.id.asc())
+                .limit(10)
                 .fetch();
     }
 
