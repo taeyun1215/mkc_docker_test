@@ -65,18 +65,18 @@ public class PostController {
     }
 
     // 게시글 검색
-    @PostMapping("search/{keyword}")
+    @GetMapping("search/{keyword}")
     public ResponseEntity<ReturnObject> searchPost(
             @PathVariable("keyword") String keyword,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        ReturnObject returnObject;
+
         Page<Post> posts = postService.searchPost(keyword, pageable);
+        PostPagingResponse response = PostPagingResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(response).build();
 
-        ReturnObject object = ReturnObject.builder()
-                .data(posts)
-                .build();
-
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 상세 정보

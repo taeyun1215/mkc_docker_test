@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class PostPagingResponse {
 
+    private int postCount;
     private List<PostAllViewResponse> posts;
 
     public static PostPagingResponse from(Page<Post> posts) {
@@ -48,6 +49,7 @@ public class PostPagingResponse {
         }
 
         return PostPagingResponse.builder()
+                .postCount((int) posts.getTotalElements())
                 .posts(postList)
                 .build();
     }
