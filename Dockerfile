@@ -2,7 +2,7 @@ FROM amazoncorretto:11
 
 VOLUME /tmp
 
-RUN yum install tzdata
+RUN yum install -y tzdata
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
