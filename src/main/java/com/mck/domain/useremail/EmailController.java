@@ -80,5 +80,4 @@ public class EmailController {
 
         return ResponseEntity.ok().body(object);
     }
-
 }
