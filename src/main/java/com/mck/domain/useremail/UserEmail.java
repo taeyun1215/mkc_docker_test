@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
+import javax.persistence.Column;
+
 @Getter @Setter
 @RedisHash(timeToLive = 600)
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class UserEmail {
     private String id;
 
     @Indexed
+    @Column(unique = true)
     private String email;
 
     private String code;

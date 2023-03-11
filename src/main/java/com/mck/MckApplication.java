@@ -1,6 +1,5 @@
 package com.mck;
 
-import com.mck.domain.role.Role;
 import com.mck.domain.user.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

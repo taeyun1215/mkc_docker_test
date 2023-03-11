@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
+import com.mck.domain.user.dto.UserResetPasswordDto;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 import com.mck.global.utils.CommonUtil;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -36,6 +38,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mck.global.utils.CommonUtil.getRandomNumber;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -49,11 +52,16 @@ public class UserController {
     @Value("${property.secretKey}")
     private String secretKey;
 
+    @Value("${environments.dev.url}")
+    private String host;
+
     private final UserService userService;
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
     private final TemplateEngine templateEngine;
     private final CommonUtil commonUtil;
+
+    private final PasswordEncoder passwordEncoder;
 
     @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -246,6 +254,87 @@ public class UserController {
 
             return ResponseEntity.ok().body(returnObject);
         }
+    }
+
+    // 비밀번호 찾기(비밀번호 초기화)
+    // 이메일을 입력하면 해당 이메일로 가입된 계정을 찾고 계정이 존재하면 입력한 이메일로 비밀번호 초기화 링크 전달
+    @GetMapping("/password")
+    public ResponseEntity<ReturnObject> findPassword(@RequestParam String email) {
+        User result = userService.checkUserEmail(email);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        if (result != null){
+            String code = getRandomNumber(6);
+
+            Context context = new Context();
+            context.setVariable("link", "/api/password?" +
+                    "checkCode=" + code +
+                    "&email=" + email
+            );
+            context.setVariable("host", host);
+            String message = templateEngine.process("mail/findPasswordForm", context);
+
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .to(email)
+                    .subject("MCK 프로젝트, 비밀번호 재설정")
+                    .message(message)
+                    .build();
+
+            emailService.sendEmail(emailMessage);
+
+            ReturnObject object = ReturnObject.builder().success(true).build();
+
+            return ResponseEntity.ok().body(object);
+
+        } else{
+            log.error("해당 이메일로 가입된 계정을 찾을 수 없습니다.");
+
+            errorObject = ErrorObject.builder().message("해당 이메일로 가입된 계정을 찾을 수 없습니다.").code("invalid_email").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
+        }
+    }
+
+    // 인증 메일 확인 후 비밀번호 재설정
+    @GetMapping("/reset-password")
+    public ResponseEntity<ReturnObject> resetPassword(UserResetPasswordDto dto, Model model) {
+        User user = userService.checkUserEmail(dto.getEmail());
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        if (!StringUtils.equals(dto.getPassword(), dto.getConfirmPassword())) {
+            log.error("검증실패");
+
+            errorObject = ErrorObject.builder().code("different_confirmPassword").message("비밀번호와 비밀번호 확인이 일치하지 않습니다.").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
+        }
+
+        if(user == null){
+            errorObject = ErrorObject.builder().message("이메일 확인 링크가 정확하지 않습니다.").code("wrong_username").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+            return ResponseEntity.ok().body(returnObject);
+        }
+
+        UserEmail userEmail = UserEmail.builder().email(dto.getEmail()).code(dto.getCode()).build();
+
+        if (!emailService.checkCertifyEmail(userEmail)) {
+            errorObject = ErrorObject.builder().message("인증 코드가 틀립니다.").code("wrong_code").build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+            return ResponseEntity.badRequest().body(returnObject);
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        userService.updateUser(user);
+
+        returnObject = ReturnObject.builder().success(true).build();
+
+        return ResponseEntity.ok().body(returnObject);
+
     }
 
     @PutMapping("/user")
