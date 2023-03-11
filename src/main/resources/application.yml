@@ -4,6 +4,10 @@ environments:
   product:
     url: http://localhost:3000
 
+server:
+  servlet:
+    context-path: /api
+
 spring:
   profiles:
     active: dev
