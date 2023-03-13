@@ -69,13 +69,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Map<String, Object> token = CommonUtil.getToken(user_domain, request);
 
-        Cookie cookie = new Cookie("refreshToken", String.valueOf(token.get("refresh_token")));
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
-
         com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername()).get();
 
         token.put("emailVerified", userDetail.isEmailVerified());

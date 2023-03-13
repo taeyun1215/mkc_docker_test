@@ -138,13 +138,6 @@ public class UserController {
 
                 response.setContentType(APPLICATION_JSON_VALUE);
 
-                Cookie cookie = new Cookie("refreshToken", String.valueOf(token.get("refresh_token")));
-                cookie.setSecure(true);
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-
-                response.addCookie(cookie);
-
                 new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
