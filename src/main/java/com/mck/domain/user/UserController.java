@@ -30,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -136,6 +137,13 @@ public class UserController {
                 returnObject = ReturnObject.builder().success(true).data(token).build();
 
                 response.setContentType(APPLICATION_JSON_VALUE);
+
+                Cookie cookie = new Cookie("refreshToken", String.valueOf(token.get("refresh_token")));
+                cookie.setSecure(true);
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+
+                response.addCookie(cookie);
 
                 new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
