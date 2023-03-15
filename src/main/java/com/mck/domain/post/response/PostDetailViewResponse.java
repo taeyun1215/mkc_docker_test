@@ -42,6 +42,7 @@ public class PostDetailViewResponse {
                 .content(post.getContent())
                 .writer(post.getWriter())
                 .view(post.getView())
+                .likes(post.getLikes().size())
                 .writeStatus(writeStatus)
                 .images(imagePostDetailViewResponse)
                 .comments(commentPostDetailViewResponses)

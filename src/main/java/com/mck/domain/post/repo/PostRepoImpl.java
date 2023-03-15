@@ -31,19 +31,8 @@ public class PostRepoImpl implements PostRepoCustom {
                 .fetch();
     }
 
-    /*
-    SELECT p.id, COUNT(p.id)
-    FROM post p
-    inner join post_like pl
-    on p.id  = pl.post_id
-    WHERE 1 = 1
-    AND p.create_time >= "2023-02-19 15:50:53.330"
-    GROUP BY p.id
-    ORDER BY COUNT(p.id) DESC
-    */
-
     // 시간 대 검색
     private BooleanExpression betweenTime(LocalDateTime localDateTime) {
-        return post.createTime.goe(localDateTime.minusDays(7));
+        return post.createTime.goe(localDateTime.minusDays(14));
     }
 }
