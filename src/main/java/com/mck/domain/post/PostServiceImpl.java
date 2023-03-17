@@ -76,10 +76,11 @@ public class PostServiceImpl implements PostService {
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
 
-        if (postDto.getImageFiles().size() > 0 && !Objects.equals(postDto.getImageFiles().get(0).getOriginalFilename(), "")) {
+        if (postDto.getImageFiles() != null) {
             List<Image> images = awsS3Service.uploadFile(post, postDto.getImageFiles());
             savePost.setImages(images);
         }
+
         return savePost;
     }
 
