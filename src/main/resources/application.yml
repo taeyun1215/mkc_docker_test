@@ -1,8 +1,8 @@
 environments:
   dev:
-    url: http://localhost:3000
+    url: https://www.devyeh.com
   product:
-    url: http://localhost:3000
+    url: https://www.devyeh.com
 
 server:
   servlet:
