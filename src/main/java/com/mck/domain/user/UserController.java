@@ -6,8 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
+import com.mck.domain.user.dto.UserProfileDto;
 import com.mck.domain.user.dto.UserResetPasswordDto;
 import com.mck.domain.user.dto.UserSignUpDto;
+import com.mck.domain.user.dto.UserUpdateDto;
 import com.mck.domain.useremail.UserEmail;
 import com.mck.global.utils.CommonUtil;
 import com.mck.global.utils.ErrorObject;
@@ -36,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -338,8 +341,59 @@ public class UserController {
 
     }
 
+    // 유저 상세정보
+    @GetMapping("/profile")
+    public ResponseEntity<ReturnObject> findUserDetail(@AuthenticationPrincipal String username){
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        User user = userService.getUser(username);
+
+        if(user == null){
+            ErrorObject error = ErrorObject.builder().message("유저 정보가 없습니다.").code("notfound_user").build();
+            ArrayList<ErrorObject> errors = new ArrayList<>();
+            errors.add(error);
+            ReturnObject object = ReturnObject.builder().success(false).error(errors).build();
+            return ResponseEntity.ok().body(object);
+        }
+
+        UserProfileDto userProdile = UserProfileDto.builder()
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .emailVerified(user.isEmailVerified())
+                .build();
+
+        returnObject = ReturnObject.builder().success(true).data(userProdile).build();
+
+        return ResponseEntity.ok().body(returnObject);
+    }
+
     @PutMapping("/user")
-    public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username){
-        return null;
+    public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username, UserUpdateDto dto){
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        User user = userService.getUser(username);
+
+        if(user == null){
+            ErrorObject error = ErrorObject.builder().message("유저 정보가 없습니다.").code("notfound_user").build();
+            ArrayList<ErrorObject> errors = new ArrayList<>();
+            errors.add(error);
+            ReturnObject object = ReturnObject.builder().success(false).error(errors).build();
+            return ResponseEntity.ok().body(object);
+        }
+
+        if(dto.getEmail() != null){
+            user.setEmail(dto.getEmail());
+        }
+        if(dto.getNickname() != null){
+            user.setNickname(dto.getNickname());
+        }
+        userService.updateUser(user);
+
+        returnObject = ReturnObject.builder().success(true).build();
+
+        return ResponseEntity.ok().body(returnObject);
     }
 }
