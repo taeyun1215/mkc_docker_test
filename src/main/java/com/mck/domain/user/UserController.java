@@ -49,7 +49,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
 
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     // 유저 등록
-    @PostMapping("/user")
+    @PostMapping("/")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user").toUriString());
 
@@ -107,13 +107,6 @@ public class UserController {
 
             return ResponseEntity.ok().body(returnObject);
         }
-    }
-
-    // 새로운 권한 생성
-    @PostMapping("/role")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
     // 토큰 재발급
@@ -161,7 +154,7 @@ public class UserController {
     }
 
     // 회원탈퇴
-    @DeleteMapping("/user")
+    @DeleteMapping("/")
     public ResponseEntity<ReturnObject> deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         ReturnObject returnObject;
@@ -369,7 +362,7 @@ public class UserController {
         return ResponseEntity.ok().body(returnObject);
     }
 
-    @PutMapping("/user")
+    @PutMapping("/")
     public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username, UserUpdateDto dto){
         ReturnObject returnObject;
         ErrorObject errorObject;
@@ -394,6 +387,16 @@ public class UserController {
 
         returnObject = ReturnObject.builder().success(true).build();
 
+        return ResponseEntity.ok().body(returnObject);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<ReturnObject> aopTest(){
+        log.info("테스트 성공!");
+        ReturnObject returnObject;
+        Map<String, String> hello = new HashMap<>();
+        hello.put("test", "testValue");
+        returnObject = ReturnObject.builder().success(true).data(hello).build();
         return ResponseEntity.ok().body(returnObject);
     }
 }

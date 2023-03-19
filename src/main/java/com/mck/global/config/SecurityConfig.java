@@ -57,8 +57,10 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()) // 커스텀 엑세스 거부 핸들러 적용
                 .authenticationEntryPoint(authenticationEntryPoint()); // 커스텀 인증 엔트리 포인트 적용
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**", "/api/check-email-code*", "/api/user", "/post/**", "/api/username", "/api/password*").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers("/login/**", "/token/refresh/**", "/check-email-code*", "/user", "/post/**", "/username", "/password*").permitAll();
+        // 테스트용
+        http.authorizeRequests().antMatchers("/user/test**").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/user/**").hasAnyAuthority("ROLE_USER");
         // http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         // jwt 인증을 위한 커스텀 인증 필터 추가
@@ -66,6 +68,8 @@ public class SecurityConfig {
         // UsernamePasswordAuthenticationFilter 필터보다 먼저 실행되어야 하므로 Before
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtExceptionFilter(), new CustomAuthorizationFilter().getClass());
+//        http.addFilterBefore(new JwtExceptionFilter(), UsernamePasswordAuthenticationFilter.class);
+
         http.httpBasic().disable().cors();
 
         return http.build();
