@@ -294,7 +294,7 @@ public class UserController {
     }
 
     // 인증 메일 확인 후 비밀번호 재설정
-    @GetMapping("/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<ReturnObject> resetPassword(UserResetPasswordDto dto, Model model) {
         User user = userService.checkUserEmail(dto.getEmail());
 
