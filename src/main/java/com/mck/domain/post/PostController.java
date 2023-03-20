@@ -65,9 +65,9 @@ public class PostController {
     }
 
     // 게시글 검색
-    @GetMapping("search/{keyword}")
+    @PostMapping("search/")
     public ResponseEntity<ReturnObject> searchPost(
-            @PathVariable("keyword") String keyword,
+            @RequestParam("keyword") String keyword,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         ReturnObject returnObject;
