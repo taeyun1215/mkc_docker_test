@@ -26,25 +26,25 @@ import java.time.LocalDateTime;
 public class AlertAspect {
     private final AlertRepo alertRepo;
 
-    @Pointcut("execution(* com.mck.domain.user..*(..))")
-    public void apiPointcut() {}
-
-    @Around("apiPointcut()")
-    public void doLogging(ProceedingJoinPoint joinPoint) throws Throwable{
-        // api 실행 전
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String requestUrl = request.getRequestURL().toString();
-        String requestMethod = request.getMethod();
-        String requestParams = new ObjectMapper().writeValueAsString(request.getParameterMap());
-
-        // api 실행
-        ResponseEntity<ReturnObject> response = (ResponseEntity<ReturnObject>) joinPoint.proceed();
-        
-        // api 실행 후
-        int statusCodeValue = response.getStatusCodeValue();
-        ReturnObject body = response.getBody();
-
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        ServletWebRequest tt = (ServletWebRequest) RequestContextHolder.getRequestAttributes();
-    }
+//    @Pointcut("execution(* com.mck.domain.user..*(..))")
+//    public void apiPointcut() {}
+//
+//    @Around("apiPointcut()")
+//    public void doLogging(ProceedingJoinPoint joinPoint) throws Throwable{
+//        // api 실행 전
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        String requestUrl = request.getRequestURL().toString();
+//        String requestMethod = request.getMethod();
+//        String requestParams = new ObjectMapper().writeValueAsString(request.getParameterMap());
+//
+//        // api 실행
+//        ResponseEntity<ReturnObject> response = (ResponseEntity<ReturnObject>) joinPoint.proceed();
+//
+//        // api 실행 후
+//        int statusCodeValue = response.getStatusCodeValue();
+//        ReturnObject body = response.getBody();
+//
+//        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+//        ServletWebRequest tt = (ServletWebRequest) RequestContextHolder.getRequestAttributes();
+//    }
 }

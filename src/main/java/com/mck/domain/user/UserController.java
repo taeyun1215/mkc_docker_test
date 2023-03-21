@@ -73,7 +73,7 @@ public class UserController {
     }
 
     // 유저 등록
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user").toUriString());
 
@@ -154,7 +154,7 @@ public class UserController {
     }
 
     // 회원탈퇴
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<ReturnObject> deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         ReturnObject returnObject;
@@ -362,7 +362,7 @@ public class UserController {
         return ResponseEntity.ok().body(returnObject);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username, UserUpdateDto dto){
         ReturnObject returnObject;
         ErrorObject errorObject;
