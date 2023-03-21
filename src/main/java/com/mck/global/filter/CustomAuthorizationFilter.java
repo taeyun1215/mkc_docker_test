@@ -37,7 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 사용자가 로그인을 시도한다면
-        if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") ){
+        if(request.getServletPath().equals("/login") || request.getServletPath().equals("/user/token/refresh") ){
             // 필터체인을 호출
             filterChain.doFilter(request, response);
         } else {
