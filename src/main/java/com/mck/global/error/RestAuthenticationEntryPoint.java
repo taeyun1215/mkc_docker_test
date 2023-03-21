@@ -1,6 +1,9 @@
 package com.mck.global.error;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mck.global.utils.ErrorObject;
+import com.mck.global.utils.ReturnObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -21,13 +24,19 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
 
-        Map<String,Object> response = new HashMap<>();
-        response.put("status","34");
-        response.put("message","unauthorized access");
-        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        errorObject = ErrorObject.builder().code("401").message("인증 에러가 발생했습니다.").build();
+        returnObject = ReturnObject.builder().success(false).error(errorObject).build();
+
+//        Map<String,Object> response = new HashMap<>();
+//        response.put("status","34");
+//        response.put("message","unauthorized access");
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
         OutputStream out = httpServletResponse.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(out, returnObject);
         out.flush();
     }
 }

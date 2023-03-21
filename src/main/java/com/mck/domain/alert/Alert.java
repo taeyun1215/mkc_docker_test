@@ -1,0 +1,33 @@
+package com.mck.domain.alert;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+// 사용자 알람
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Alert {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    // 수신자
+    private String username;
+    // comment : 사용자 게시글에 comment
+    // reply : 사용자 댓글에 reply
+    private String type;
+    // alert 대상 url
+    private String url;
+    // 메세지
+    private String message;
+    // 알람 확인 여부 (0: 미확인, 1: 확인
+    private int check;
+    // 알람 생성일자
+    private LocalDateTime createdAt;
+}
