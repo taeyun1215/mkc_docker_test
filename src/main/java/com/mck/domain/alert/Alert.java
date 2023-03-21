@@ -17,7 +17,7 @@ public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // 수신자
+    // 수신자 (comment는 작성자, reply는 comment 작성자)
     private String username;
     // comment : 사용자 게시글에 comment
     // reply : 사용자 댓글에 reply
