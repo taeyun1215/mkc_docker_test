@@ -27,30 +27,30 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class AlertAspect {
-    private final AlertRepo alertRepo;
-
-    @Pointcut("execution(* com.mck.domain.comment.CommentController..save*(..))")
-    public void commentPointcut() {}
-
-    @Around("commentPointcut()")
-    public void doLogging(ProceedingJoinPoint joinPoint) throws Throwable{
-        // api 실행 전
-//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        String requestUrl = request.getRequestURL().toString();
-//        String requestMethod = request.getMethod();
+//    private final AlertRepo alertRepo;
 //
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    @Pointcut("execution(* com.mck.domain.comment.CommentController..save*(..))")
+//    public void commentPointcut() {}
 //
-//        String requestParams = new ObjectMapper().writeValueAsString(request.getParameterMap());
+//    @Around("commentPointcut()")
+//    public void doLogging(ProceedingJoinPoint joinPoint) throws Throwable{
+//        // api 실행 전
+////        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+////        String requestUrl = request.getRequestURL().toString();
+////        String requestMethod = request.getMethod();
+////
+////        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+////
+////        String requestParams = new ObjectMapper().writeValueAsString(request.getParameterMap());
+////
+////        // api 실행
+////        ResponseEntity<ReturnObject> response = (ResponseEntity<ReturnObject>) joinPoint.proceed();
 //
-//        // api 실행
-//        ResponseEntity<ReturnObject> response = (ResponseEntity<ReturnObject>) joinPoint.proceed();
-
-        // api 실행 후
-//        ReturnObject body = response.getBody();
-//        Object data = body.getData();
-//
-//        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-//        ServletWebRequest tt = (ServletWebRequest) RequestContextHolder.getRequestAttributes();
-    }
+//        // api 실행 후
+////        ReturnObject body = response.getBody();
+////        Object data = body.getData();
+////
+////        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+////        ServletWebRequest tt = (ServletWebRequest) RequestContextHolder.getRequestAttributes();
+//    }
 }
