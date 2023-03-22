@@ -81,7 +81,7 @@ public class AwsS3Service {
             imageRepo.delete(image);
         });
 
-        if (postDto.getImageFiles().size() > 0 && !Objects.equals(postDto.getImageFiles().get(0).getOriginalFilename(), "")) {
+        if (postDto.getImageFiles() != null) {
             uploadFile(post, postDto.getImageFiles());
         }
     }

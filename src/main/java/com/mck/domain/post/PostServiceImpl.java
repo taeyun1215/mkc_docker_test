@@ -97,9 +97,8 @@ public class PostServiceImpl implements PostService {
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
         log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
 
-        if (postDto.getImageFiles() != null) {
-            awsS3Service.updateFile(findPost, findPost.getImages(), postDto);
-        }
+        awsS3Service.updateFile(findPost, findPost.getImages(), postDto);
+
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
     }
