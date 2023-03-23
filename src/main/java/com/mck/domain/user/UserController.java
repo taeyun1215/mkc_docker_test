@@ -130,7 +130,18 @@ public class UserController {
 
                 Map<String, Object> token = commonUtil.getToken(user, request);
 
-                returnObject = ReturnObject.builder().success(true).data(token).build();
+                Map<String, Object> resultObject = new HashMap<>();
+
+                resultObject.put("access_token", token.get("access_token"));
+
+                Cookie cookie = new Cookie("refresh_token", String.valueOf(token.get("access_token")));
+                cookie.setSecure(true);
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+
+                response.addCookie(cookie);
+
+                returnObject = ReturnObject.builder().success(true).data(resultObject).build();
 
                 response.setContentType(APPLICATION_JSON_VALUE);
 

@@ -71,11 +71,22 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername()).get();
 
-        token.put("emailVerified", userDetail.isEmailVerified());
-        token.put("nickname", userDetail.getNickname());
+        Map<String, Object> resultObject = new HashMap<>();
+
+        resultObject.put("access_token", token.get("access_token"));
+        resultObject.put("emailVerified", userDetail.isEmailVerified());
+        resultObject.put("nickname", userDetail.getNickname());
+
+        Cookie cookie = new Cookie("refresh_token", String.valueOf(token.get("access_token")));
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
+
         response.setContentType(APPLICATION_JSON_VALUE);
 
-        ReturnObject returnObject = ReturnObject.builder().success(true).data(token).build();
+        ReturnObject returnObject = ReturnObject.builder().success(true).data(resultObject).build();
 
         new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
     }
