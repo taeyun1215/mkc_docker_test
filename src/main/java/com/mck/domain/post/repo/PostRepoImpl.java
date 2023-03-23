@@ -31,8 +31,25 @@ public class PostRepoImpl implements PostRepoCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Post> myPost(String username) {
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(
+                        sameUsername(username)
+                )
+                .orderBy(post.id.desc())
+                .fetch();
+    }
+
     // 시간 대 검색
     private BooleanExpression betweenTime(LocalDateTime localDateTime) {
         return post.createTime.goe(localDateTime.minusDays(14));
     }
+
+    // 시간 대 검색
+    private BooleanExpression sameUsername(String username) {
+        return post.user.username.eq(username);
+    }
+
 }

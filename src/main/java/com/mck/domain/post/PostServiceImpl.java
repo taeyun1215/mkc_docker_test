@@ -197,4 +197,10 @@ public class PostServiceImpl implements PostService {
         return postRepo.popularPost();
     }
 
+    @Override
+    @Transactional
+    public List<Post> myPost(String username) {
+        return postRepo.myPost(username);
+    }
+
 }

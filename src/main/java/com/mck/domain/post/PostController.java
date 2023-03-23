@@ -5,6 +5,7 @@ import com.mck.domain.comment.CommentService;
 import com.mck.domain.comment.response.CommentPostDetailViewResponse;
 import com.mck.domain.image.response.ImagePostDetailViewResponse;
 import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.response.PostMyWriteResponse;
 import com.mck.domain.post.response.PostPagingResponse;
 import com.mck.domain.post.response.PostDetailViewResponse;
 import com.mck.domain.post.response.PostPopularResponse;
@@ -219,7 +220,7 @@ public class PostController {
         return ResponseEntity.ok().body(returnObject);
     }
 
-    // 게시글 좋아요
+    // 인기 게시글
     @GetMapping("popular")
     public ResponseEntity<ReturnObject> popularPost() {
 
@@ -229,6 +230,23 @@ public class PostController {
         List<Post> posts = postService.popularPost();
         List<PostPopularResponse> postPopularResponse = PostPopularResponse.from(posts);
         returnObject = ReturnObject.builder().success(true).data(postPopularResponse).build();
+
+        return ResponseEntity.ok().body(returnObject);
+    }
+
+    // 내가 쓴 게시글
+    @GetMapping("/myPost")
+    public ResponseEntity<ReturnObject> myPost(
+            @AuthenticationPrincipal String username
+    ) {
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        List<Post> posts = postService.myPost(username);
+
+        PostMyWriteResponse postMyWriteResponse = PostMyWriteResponse.from(posts, username);
+        returnObject = ReturnObject.builder().success(true).data(postMyWriteResponse).build();
 
         return ResponseEntity.ok().body(returnObject);
     }

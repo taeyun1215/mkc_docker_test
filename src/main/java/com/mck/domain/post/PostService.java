@@ -41,7 +41,10 @@ public interface PostService {
     // 게시글 조회수
     void updateViewPost(Long postId);
 
-    // 인기 게시글.
+    // 인기 게시글
     List<Post> popularPost();
+
+    // 내가 쓴 게시글
+    List<Post> myPost(String username);
 
 }
