@@ -38,10 +38,8 @@ spring:
             enable: true
 
   redis:
+    host: redis
     port: 6379
-    host: 39.117.201.199
-    username: root
-    password: 3iZXb4AK5dH5
 
   servlet:
     multipart:
