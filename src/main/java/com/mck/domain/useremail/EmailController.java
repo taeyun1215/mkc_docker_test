@@ -66,7 +66,7 @@ public class EmailController {
 
         EmailMessage emailMessage = EmailMessage.builder()
                 .to(user.getEmail())
-                .subject("MCK 프로젝트, 회원 가입 인증")
+                .subject("YEH 프로젝트, 회원 가입 인증")
                 .message(message)
                 .code(code)
                 .build();

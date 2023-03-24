@@ -255,7 +255,7 @@ public class UserController {
 
             EmailMessage emailMessage = EmailMessage.builder()
                     .to(email)
-                    .subject("MCK 프로젝트, 아이디 찾기")
+                    .subject("YEH 프로젝트, 아이디 찾기")
                     .message(message)
                     .build();
 
@@ -295,7 +295,7 @@ public class UserController {
 
             EmailMessage emailMessage = EmailMessage.builder()
                     .to(email)
-                    .subject("MCK 프로젝트, 비밀번호 재설정")
+                    .subject("YEH 프로젝트, 비밀번호 재설정")
                     .message(message)
                     .build();
 
