@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,7 +129,7 @@ public class UserController {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer+")) {
             try {
                 // 토크만 추출 하도록 type부분 제거
-                String refresh_token = authorizationHeader.substring("Bearer ".length());
+                String refresh_token = authorizationHeader.substring("Bearer+".length());
                 Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
                 // JWT 검증용 객체 생성(토큰 생성할때와 동일한 알고리즘 적용)
                 JWTVerifier verifier = JWT.require(algorithm).build();
@@ -143,8 +144,9 @@ public class UserController {
 
                 resultObject.put("access_token", token.get("access_token"));
 
-                Cookie cookie = new Cookie("refresh_token", String.valueOf(token.get("access_token")));
-                cookie.setSecure(true);
+                String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
+                Cookie cookie = new Cookie("refresh_token", encodedValue);
+//                cookie.setSecure(true);
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
 
