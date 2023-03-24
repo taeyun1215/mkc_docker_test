@@ -6,10 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
-import com.mck.domain.user.dto.UserProfileDto;
-import com.mck.domain.user.dto.UserResetPasswordDto;
-import com.mck.domain.user.dto.UserSignUpDto;
-import com.mck.domain.user.dto.UserUpdateDto;
+import com.mck.domain.user.dto.*;
 import com.mck.domain.useremail.UserEmail;
 import com.mck.global.utils.CommonUtil;
 import com.mck.global.utils.ErrorObject;
@@ -411,14 +408,35 @@ public class UserController {
 
         return ResponseEntity.ok().body(returnObject);
     }
+//
+//    @GetMapping("/test")
+//    public ResponseEntity<ReturnObject> aopTest(){
+//        log.info("테스트 성공!");
+//        ReturnObject returnObject;
+//        Map<String, String> hello = new HashMap<>();
+//        hello.put("test", "testValue");
+//        returnObject = ReturnObject.builder().success(true).data(hello).build();
+//        return ResponseEntity.ok().body(returnObject);
+//    }
 
-    @GetMapping("/test")
-    public ResponseEntity<ReturnObject> aopTest(){
-        log.info("테스트 성공!");
+    // 비밀번호 변경(프로필)
+    @PostMapping("/change-password")
+    public ResponseEntity<ReturnObject> changePassword(@AuthenticationPrincipal String username, @RequestBody UserChangePasswordDto dto){
         ReturnObject returnObject;
-        Map<String, String> hello = new HashMap<>();
-        hello.put("test", "testValue");
-        returnObject = ReturnObject.builder().success(true).data(hello).build();
+        ErrorObject errorObject;
+        if (!dto.getPassword().equals(dto.getConfirmPassword())){
+            errorObject = ErrorObject.builder().message("비밀번호와 비밀번호 확인이 일치하지 않습니다.").code("notmatch_password").build();
+            ArrayList<ErrorObject> errors = new ArrayList<>();
+            errors.add(errorObject);
+            ReturnObject object = ReturnObject.builder().success(false).error(errors).build();
+            return ResponseEntity.ok().body(object);
+        }
+        User user = userService.getUser(username);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userService.updateUser(user);
+
+        returnObject = ReturnObject.builder().success(true).build();
+
         return ResponseEntity.ok().body(returnObject);
     }
 }
