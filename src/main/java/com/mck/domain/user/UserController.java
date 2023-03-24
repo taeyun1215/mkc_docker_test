@@ -112,11 +112,20 @@ public class UserController {
     // 토큰 재발급
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
+
+        String authorizationHeader = null;
+        Cookie[] cookies = request.getCookies();
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh_token")) {
+                authorizationHeader = cookie.getValue();
+            }
+        }
+
         ReturnObject returnObject;
         ErrorObject errorObject;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer+")) {
             try {
                 // 토크만 추출 하도록 type부분 제거
                 String refresh_token = authorizationHeader.substring("Bearer ".length());

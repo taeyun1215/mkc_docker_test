@@ -22,6 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +78,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         resultObject.put("emailVerified", userDetail.isEmailVerified());
         resultObject.put("nickname", userDetail.getNickname());
 
-        Cookie cookie = new Cookie("refresh_token", String.valueOf(token.get("access_token")));
+        String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
+        Cookie cookie = new Cookie("refresh_token", encodedValue);
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
