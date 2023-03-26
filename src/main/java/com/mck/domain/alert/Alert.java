@@ -1,8 +1,5 @@
 package com.mck.domain.alert;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +7,7 @@ import java.time.LocalDateTime;
 // 사용자 알람
 @Entity
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Alert {
@@ -26,8 +23,8 @@ public class Alert {
     private String url;
     // 메세지
     private String message;
-    // 알람 확인 여부 (0: 미확인, 1: 확인
-    private int check;
+    // 알람 확인 여부 (0: 미확인, 1: 확인)
+    private Integer confirm;
     // 알람 생성일자
     private LocalDateTime createdAt;
 }
