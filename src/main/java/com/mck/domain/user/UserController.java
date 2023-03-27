@@ -146,7 +146,6 @@ public class UserController {
 
                 Cookie localCookie = new Cookie("refresh_token", encodedValue);
                 localCookie.setDomain("localhost");
-                localCookie.setDomain("www.devyeh.com");
 //                cookie.setSecure(true);
 //                cookie.setHttpOnly(true);
                 localCookie.setPath("/");
@@ -154,7 +153,6 @@ public class UserController {
                 response.addCookie(localCookie);
 
                 Cookie domainCookie = new Cookie("refresh_token", encodedValue);
-                domainCookie.setDomain("localhost");
                 domainCookie.setDomain("www.devyeh.com");
 //                cookie.setSecure(true);
 //                cookie.setHttpOnly(true);
