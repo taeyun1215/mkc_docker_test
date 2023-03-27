@@ -79,14 +79,24 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         resultObject.put("nickname", userDetail.getNickname());
 
         String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
-        Cookie cookie = new Cookie("refresh_token", encodedValue);
-        cookie.setDomain("localhost");
-        cookie.setDomain("www.devyeh.com");
-//        cookie.setSecure(true);
-//        cookie.setHttpOnly(true);
-        cookie.setPath("/");
 
-        response.addCookie(cookie);
+        Cookie localCookie = new Cookie("refresh_token", encodedValue);
+        localCookie.setDomain("localhost");
+        localCookie.setDomain("www.devyeh.com");
+//                cookie.setSecure(true);
+//                cookie.setHttpOnly(true);
+        localCookie.setPath("/");
+
+        response.addCookie(localCookie);
+
+        Cookie domainCookie = new Cookie("refresh_token", encodedValue);
+        domainCookie.setDomain("localhost");
+        domainCookie.setDomain("www.devyeh.com");
+//                cookie.setSecure(true);
+//                cookie.setHttpOnly(true);
+        domainCookie.setPath("/");
+
+        response.addCookie(domainCookie);
 
         response.setContentType(APPLICATION_JSON_VALUE);
 

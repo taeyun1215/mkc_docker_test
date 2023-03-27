@@ -143,19 +143,27 @@ public class UserController {
                 resultObject.put("access_token", token.get("access_token"));
 
                 String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
-                Cookie cookie = new Cookie("refresh_token", encodedValue);
-                cookie.setDomain("localhost");
-                cookie.setDomain("www.devyeh.com");
+
+                Cookie localCookie = new Cookie("refresh_token", encodedValue);
+                localCookie.setDomain("localhost");
+                localCookie.setDomain("www.devyeh.com");
 //                cookie.setSecure(true);
 //                cookie.setHttpOnly(true);
-                cookie.setPath("/");
+                localCookie.setPath("/");
 
-                response.addCookie(cookie);
+                response.addCookie(localCookie);
+
+                Cookie domainCookie = new Cookie("refresh_token", encodedValue);
+                domainCookie.setDomain("localhost");
+                domainCookie.setDomain("www.devyeh.com");
+//                cookie.setSecure(true);
+//                cookie.setHttpOnly(true);
+                domainCookie.setPath("/");
+
+                response.addCookie(domainCookie);
 
                 returnObject = ReturnObject.builder().success(true).data(resultObject).build();
-
                 response.setContentType(APPLICATION_JSON_VALUE);
-
                 new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
