@@ -143,8 +143,9 @@ public class UserController {
 
                 String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
                 Cookie cookie = new Cookie("refresh_token", encodedValue);
+                cookie.setDomain("localhost");
 //                cookie.setSecure(true);
-//                cookie.setHttpOnly(true);
+                cookie.setHttpOnly(true);
                 cookie.setPath("/");
 
                 response.addCookie(cookie);
