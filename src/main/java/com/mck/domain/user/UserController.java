@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.*;
 import com.mck.domain.useremail.UserEmail;
-import com.mck.global.utils.CommonUtil;
-import com.mck.global.utils.ErrorObject;
-import com.mck.global.utils.ReturnObject;
-import com.mck.global.utils.SignUpFormValidator;
+import com.mck.global.utils.*;
 import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -144,13 +141,15 @@ public class UserController {
 
                 String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
 
-                Cookie localCookie = new Cookie("refresh_token", encodedValue);
-                localCookie.setDomain("localhost");
+//                Cookie localCookie = new Cookie("refresh_token", encodedValue);
+//                localCookie.setDomain("localhost");
 //                cookie.setSecure(true);
 //                cookie.setHttpOnly(true);
-                localCookie.setPath("/");
+//                localCookie.setPath("/");
 
-                response.addCookie(localCookie);
+//                response.addCookie(localCookie);
+
+                CookieUtil.addCookie(response, "refresh_token", encodedValue);
 
                 Cookie domainCookie = new Cookie("refresh_token", encodedValue);
                 domainCookie.setDomain("www.devyeh.com");

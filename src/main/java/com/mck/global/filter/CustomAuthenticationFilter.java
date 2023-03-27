@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.utils.CommonUtil;
+import com.mck.global.utils.CookieUtil;
 import com.mck.global.utils.ErrorObject;
 import com.mck.global.utils.ReturnObject;
 import lombok.extern.slf4j.Slf4j;
@@ -80,13 +81,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
 
-        Cookie localCookie = new Cookie("refresh_token", encodedValue);
-        localCookie.setDomain("localhost");
+//                Cookie localCookie = new Cookie("refresh_token", encodedValue);
+//                localCookie.setDomain("localhost");
 //                cookie.setSecure(true);
 //                cookie.setHttpOnly(true);
-        localCookie.setPath("/");
+//                localCookie.setPath("/");
 
-        response.addCookie(localCookie);
+//                response.addCookie(localCookie);
+
+        CookieUtil.addCookie(response, "refresh_token", encodedValue);
 
         Cookie domainCookie = new Cookie("refresh_token", encodedValue);
         domainCookie.setDomain("www.devyeh.com");
@@ -97,9 +100,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.addCookie(domainCookie);
 
         response.setContentType(APPLICATION_JSON_VALUE);
-
         ReturnObject returnObject = ReturnObject.builder().success(true).data(resultObject).build();
-
         new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
     }
 }
