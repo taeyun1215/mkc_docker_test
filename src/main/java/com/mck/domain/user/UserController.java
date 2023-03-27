@@ -49,6 +49,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @Slf4j
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Value("${property.secretKey}")
@@ -144,8 +145,9 @@ public class UserController {
                 String encodedValue = URLEncoder.encode("Bearer " + (String) token.get("refresh_token"), "UTF-8" ) ;
                 Cookie cookie = new Cookie("refresh_token", encodedValue);
                 cookie.setDomain("localhost");
+                cookie.setDomain("www.devyeh.com");
 //                cookie.setSecure(true);
-                cookie.setHttpOnly(true);
+//                cookie.setHttpOnly(true);
                 cookie.setPath("/");
 
                 response.addCookie(cookie);
