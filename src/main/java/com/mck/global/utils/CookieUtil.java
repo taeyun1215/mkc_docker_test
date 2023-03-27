@@ -12,7 +12,7 @@ public class CookieUtil {
                 .sameSite("None")
                 .domain("localhost")
 //                .httpOnly(false)
-//                .secure(false)
+                .secure(true)
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());

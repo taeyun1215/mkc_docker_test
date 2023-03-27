@@ -149,15 +149,15 @@ public class UserController {
 
 //                response.addCookie(localCookie);
 
-                CookieUtil.addCookie(response, "refresh_token", encodedValue);
-
                 Cookie domainCookie = new Cookie("refresh_token", encodedValue);
                 domainCookie.setDomain("www.devyeh.com");
-//                cookie.setSecure(true);
+                domainCookie.setSecure(true);
 //                cookie.setHttpOnly(true);
                 domainCookie.setPath("/");
 
                 response.addCookie(domainCookie);
+
+                CookieUtil.addCookie(response, "refresh_token", encodedValue);
 
                 returnObject = ReturnObject.builder().success(true).data(resultObject).build();
                 response.setContentType(APPLICATION_JSON_VALUE);
