@@ -1,5 +1,7 @@
 package com.mck.domain.user;
 
+import com.mck.domain.comment.Comment;
+import com.mck.domain.post.Post;
 import com.mck.domain.role.Role;
 import lombok.*;
 import javax.persistence.*;
@@ -7,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -41,6 +44,12 @@ public class User {
 
     @Column(nullable = false)
     private boolean emailVerified; // 이메일 인증 여부
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
 
     private LocalDateTime joinedAt; // 로그인한 시간
 
