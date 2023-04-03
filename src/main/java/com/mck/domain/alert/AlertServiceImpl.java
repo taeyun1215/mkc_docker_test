@@ -23,14 +23,14 @@ public class AlertServiceImpl implements AlertService {
         return alert_list;
     }
 
-    @Override
-    public Alert getAlert(String username) {
-        Alert alert = alertRepo.findByIdThenConfirmIsZero(username);
-        if (alert == null){
-            return null;
-        }
-        return alert;
-    }
+//    @Override
+//    public Alert getAlert(String username) {
+//        Alert alert = alertRepo.findByIdThenConfirmIsZero(username);
+//        if (alert == null){
+//            return null;
+//        }
+//        return alert;
+//    }
 
     @Override
     public void updateAlert(Alert alert) {

@@ -36,27 +36,27 @@ public class AlertController {
         return ResponseEntity.ok().body(returnObject);
     }
 
-    @PostMapping
-    public ResponseEntity<ReturnObject> confirmAlert(String id){
-        ReturnObject returnObject;
-        ErrorObject errorObject;
-
-        Alert alert = alertService.getAlert(id);
-        if (alert == null){
-            errorObject = ErrorObject.builder().message("알림이 없습니다.").code("notfound_alert").build();
-            ArrayList<ErrorObject> errors = new ArrayList<>();
-            errors.add(errorObject);
-            ReturnObject object = ReturnObject.builder().success(false).error(errors).build();
-            return ResponseEntity.ok().body(object);
-        }
-
-        alert.setConfirm(1);
-
-        alertService.updateAlert(alert);
-
-        returnObject = ReturnObject.builder().success(true).build();
-
-        return ResponseEntity.ok().body(returnObject);
-    }
+//    @PostMapping
+//    public ResponseEntity<ReturnObject> confirmAlert(String id){
+//        ReturnObject returnObject;
+//        ErrorObject errorObject;
+//
+//        Alert alert = alertService.getAlert(id);
+//        if (alert == null){
+//            errorObject = ErrorObject.builder().message("알림이 없습니다.").code("notfound_alert").build();
+//            ArrayList<ErrorObject> errors = new ArrayList<>();
+//            errors.add(errorObject);
+//            ReturnObject object = ReturnObject.builder().success(false).error(errors).build();
+//            return ResponseEntity.ok().body(object);
+//        }
+//
+//        alert.setConfirm(1);
+//
+//        alertService.updateAlert(alert);
+//
+//        returnObject = ReturnObject.builder().success(true).build();
+//
+//        return ResponseEntity.ok().body(returnObject);
+//    }
 
 }

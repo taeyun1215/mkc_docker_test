@@ -13,7 +13,7 @@ import java.util.List;
 public interface AlertService {
     List<AlertAllResDto> getAlertList(String username);
 
-    Alert getAlert(String usernmame);
+//    Alert getAlert(String usernmame);
 
     void updateAlert(Alert alert);
 }

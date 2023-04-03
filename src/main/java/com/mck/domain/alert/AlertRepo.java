@@ -17,11 +17,11 @@ public interface AlertRepo extends JpaRepository<Alert, Long> {
             "limit 10", nativeQuery = true)
     List<AlertAllResDto> getAlertByUsername(String username);
 
-    @Query(value = "select * from alert " +
-            "where 1=1 " +
-            "and username = :id " +
-            "and confirm = 0 " +
-            "order by createdAt desc " +
-            "limit 10", nativeQuery = true)
-    Alert findByIdThenConfirmIsZero(String username);
+//    @Query(value = "select * from alert " +
+//            "where 1=1 " +
+//            "and username = :id " +
+//            "and confirm = 0 " +
+//            "order by createdAt desc " +
+//            "limit 10", nativeQuery = true)
+//    Alert findByIdThenConfirmIsZero(String username);
 }
