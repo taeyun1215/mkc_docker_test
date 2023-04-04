@@ -1,6 +1,7 @@
 package com.mck.domain.post;
 
 import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.request.PostEditDto;
 import com.mck.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,7 @@ public interface PostService {
     Post savePost(PostDto postDto, User user) throws IOException;
 
     // 게시글 수정
-    void editPost(Long postId, PostDto postDto, User user) throws IOException;
+    void editPost(Long postId, PostEditDto postEditDto, User user) throws IOException;
 
     // 게시글 삭제
     void deletePost(Long postId, User user) throws IOException;

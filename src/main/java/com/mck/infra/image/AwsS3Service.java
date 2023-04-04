@@ -8,7 +8,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mck.domain.image.Image;
 import com.mck.domain.image.ImageRepo;
 import com.mck.domain.post.Post;
-import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.request.PostEditDto;
+import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class AwsS3Service {
 
@@ -75,14 +73,39 @@ public class AwsS3Service {
     }
 
     @Transactional
-    public void updateFile(Post post, List<Image> images, PostDto postDto) {
-        images.forEach(image -> {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageName()));
-            imageRepo.delete(image);
-        });
+    public void updateFile(Post post, PostEditDto postEditDto) {
+        List<Image> images = post.getImages();
+        List<String> alreadyImagesId = new ArrayList<>();
 
-        if (postDto.getImageFiles() != null) {
-            uploadFile(post, postDto.getImageFiles());
+        for (Image image : images) {
+            alreadyImagesId.add(String.valueOf(image.getId()));
+        }
+
+        // 기존 이미지 파일
+        if (postEditDto.getImagesId() != null) {
+            for (String imagesId : postEditDto.getImagesId()) {
+                alreadyImagesId.remove(imagesId);
+            }
+            if (alreadyImagesId.size() > 0) {
+                for (String deleteImagesId : alreadyImagesId) {
+                    Optional<Image> image = imageRepo.findById(Long.valueOf(deleteImagesId));
+                    imageRepo.deleteById(image.get().getId());
+                    deleteFile(image.get().getImageName());
+                }
+            }
+        } else {
+            if (alreadyImagesId.size() > 0) {
+                for (String deleteImagesId : alreadyImagesId) {
+                    Optional<Image> image = imageRepo.findById(Long.valueOf(deleteImagesId));
+                    imageRepo.deleteById(image.get().getId());
+                    deleteFile(image.get().getImageName());
+                }
+            }
+        }
+
+        // 새로 추가 된 이미지 파일
+        if (postEditDto.getImageFiles() != null) {
+            uploadFile(post, postEditDto.getImageFiles());
         }
     }
 

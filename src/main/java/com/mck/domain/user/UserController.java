@@ -46,7 +46,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Value("${property.secretKey}")

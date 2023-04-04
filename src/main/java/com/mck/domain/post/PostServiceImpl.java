@@ -5,6 +5,7 @@ import com.mck.domain.image.ImageRepo;
 import com.mck.domain.image.ImageService;
 import com.mck.domain.post.repo.PostRepo;
 import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.request.PostEditDto;
 import com.mck.domain.postlike.PostLike;
 import com.mck.domain.postlike.PostLikeRepo;
 import com.mck.domain.user.User;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void editPost(Long postId, PostDto postDto, User user) throws IOException {
+    public void editPost(Long postId, PostEditDto postEditDto, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
@@ -94,10 +94,10 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         validateEditPost(postId, findUser); // 유효성 검사
-        postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
-        log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
+        postRepo.editPost(postEditDto.getTitle(), postEditDto.getContent(), postId);
+        log.info("게시글 정보를 업데이트 했습니다 : ", postEditDto.getTitle());
 
-        awsS3Service.updateFile(findPost, findPost.getImages(), postDto);
+        awsS3Service.updateFile(findPost, postEditDto);
 
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 

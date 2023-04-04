@@ -5,6 +5,7 @@ import com.mck.domain.comment.CommentService;
 import com.mck.domain.comment.response.CommentPostDetailViewResponse;
 import com.mck.domain.image.response.ImagePostDetailViewResponse;
 import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.request.PostEditDto;
 import com.mck.domain.post.response.PostMyWriteResponse;
 import com.mck.domain.post.response.PostPagingResponse;
 import com.mck.domain.post.response.PostDetailViewResponse;
@@ -163,7 +164,7 @@ public class PostController {
     @PutMapping("/edit/{post_id}")
     public ResponseEntity<ReturnObject> editPost(
             @PathVariable("post_id") Long postId,
-            @Validated @ModelAttribute("postDto") PostDto postDto,
+            @Validated @ModelAttribute("postEditDto") PostEditDto postEditDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal String username
     ) throws IOException {
@@ -178,7 +179,7 @@ public class PostController {
             return ResponseEntity.ok().body(returnObject);
         } else {
             User user = userService.getUser(username);
-            postService.editPost(postId, postDto, user);
+            postService.editPost(postId, postEditDto, user);
             returnObject = ReturnObject.builder().success(true).data("수정이 완료되었습니다.").build();
 
             return ResponseEntity.ok().body(returnObject);
