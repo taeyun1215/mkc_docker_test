@@ -203,4 +203,10 @@ public class PostServiceImpl implements PostService {
         return postRepo.myPost(username);
     }
 
+    @Override
+    @Transactional
+    public void editPostNickname(String existNickname, String editNickname) {
+        postRepo.editPostNickname(existNickname, editNickname);
+    }
+
 }

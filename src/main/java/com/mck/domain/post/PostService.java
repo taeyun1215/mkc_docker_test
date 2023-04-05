@@ -48,4 +48,7 @@ public interface PostService {
     // 내가 쓴 게시글
     List<Post> myPost(String username);
 
+    // 닉네임 수정시 게시글 닉네임도 수정하기.
+    void editPostNickname(String existNickname, String editNickname);
+
 }
