@@ -22,7 +22,7 @@ public class User {
     @Id @GeneratedValue(strategy = AUTO)
     private Long id;
 
-    @Size(min=3, max=10)
+    @Size(min=2, max=10)
     @Column(nullable = false)
     private String nickname; // 닉네임
 

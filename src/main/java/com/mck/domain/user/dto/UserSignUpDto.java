@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 public class UserSignUpDto {
 
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Size(min=3, max=10, message = "닉네임은 3자 이상 10자 이하로 입력해주세요.")
+    @Size(min=2, max=10, message = "닉네임은 3자 이상 10자 이하로 입력해주세요.")
     @Pattern(regexp = "^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]*$",
             message = "닉네임은 영문, 숫자, 한글만 가능합니다.")
     private String nickname;

@@ -290,7 +290,7 @@ public class UserController {
             String code = getRandomNumber(6);
 
             Context context = new Context();
-            context.setVariable("link", "/api/password?" +
+            context.setVariable("link", "/user/resetPW?" +
                     "checkCode=" + code +
                     "&email=" + email
             );
@@ -389,7 +389,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<ReturnObject> updateUser(@AuthenticationPrincipal String username, UserUpdateDto dto){
+    public ResponseEntity<ReturnObject> updateUser(@Valid UserUpdateDto dto, @AuthenticationPrincipal String username){
         ReturnObject returnObject;
         ErrorObject errorObject;
 
@@ -403,9 +403,9 @@ public class UserController {
             return ResponseEntity.ok().body(object);
         }
 
-        if(dto.getEmail() != null){
-            user.setEmail(dto.getEmail());
-        }
+//        if(dto.getEmail() != null){
+//            user.setEmail(dto.getEmail());
+//        }
         if(dto.getNickname() != null){
             user.setNickname(dto.getNickname());
         }
