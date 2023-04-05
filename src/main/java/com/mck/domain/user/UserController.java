@@ -411,7 +411,10 @@ public class UserController {
         }
         userService.updateUser(user);
 
-        returnObject = ReturnObject.builder().success(true).build();
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("nickname", dto.getNickname());
+
+        returnObject = ReturnObject.builder().success(true).data(resultMap).build();
 
         return ResponseEntity.ok().body(returnObject);
     }
