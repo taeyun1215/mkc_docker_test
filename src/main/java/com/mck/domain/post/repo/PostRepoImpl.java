@@ -42,12 +42,23 @@ public class PostRepoImpl implements PostRepoCustom {
                 .fetch();
     }
 
+    @Override
+    public Long editPostNickname(String existNickname, String editNickname) {
+        return jpaQueryFactory
+                .update(post)
+                .set(post.writer, editNickname)
+                .where(
+                        post.writer.eq(existNickname)
+                )
+                .execute();
+    }
+
     // 시간 대 검색
     private BooleanExpression betweenTime(LocalDateTime localDateTime) {
         return post.createTime.goe(localDateTime.minusDays(14));
     }
 
-    // 시간 대 검색
+    // username이 일치하는지
     private BooleanExpression sameUsername(String username) {
         return post.user.username.eq(username);
     }

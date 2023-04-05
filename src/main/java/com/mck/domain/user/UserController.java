@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mck.domain.post.PostService;
 import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.*;
 import com.mck.domain.useremail.UserEmail;
@@ -56,6 +57,7 @@ public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final PostService postService;
     private final SignUpFormValidator signUpFormValidator;
     private final TemplateEngine templateEngine;
     private final CommonUtil commonUtil;
@@ -394,6 +396,7 @@ public class UserController {
         ErrorObject errorObject;
 
         User user = userService.getUser(username);
+        String existNickname = user.getNickname();
 
         if(user == null){
             ErrorObject error = ErrorObject.builder().message("유저 정보가 없습니다.").code("notfound_user").build();
@@ -409,7 +412,9 @@ public class UserController {
         if(dto.getNickname() != null){
             user.setNickname(dto.getNickname());
         }
+
         userService.updateUser(user);
+        postService.editPostNickname(existNickname, dto.getNickname());
 
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("nickname", dto.getNickname());

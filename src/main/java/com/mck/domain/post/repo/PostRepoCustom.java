@@ -12,4 +12,7 @@ public interface PostRepoCustom {
     // 내가 쓴 게시글
     List<Post> myPost(String username);
 
+    // 닉네임 수정시 게시글 닉네임 수정
+    Long editPostNickname(String existNickname, String editNickname);
+
 }
