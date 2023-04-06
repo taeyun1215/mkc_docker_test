@@ -303,6 +303,7 @@ public class UserController {
                     .to(email)
                     .subject("YEH 프로젝트, 비밀번호 재설정")
                     .message(message)
+                    .code(code)
                     .build();
 
             emailService.sendEmail(emailMessage);
@@ -323,7 +324,7 @@ public class UserController {
 
     // 인증 메일 확인 후 비밀번호 재설정
     @PostMapping("/reset-password")
-    public ResponseEntity<ReturnObject> resetPassword(UserResetPasswordDto dto, Model model) {
+    public ResponseEntity<ReturnObject> resetPassword(@RequestBody @Valid UserResetPasswordDto dto, Model model) {
         User user = userService.checkUserEmail(dto.getEmail());
 
         ReturnObject returnObject;
