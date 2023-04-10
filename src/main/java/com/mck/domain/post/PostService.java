@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public interface PostService {
 
     // 게시글 Paging

@@ -56,7 +56,7 @@ public class Post extends BaseEntity {
             targetEntity = Image.class,
             mappedBy = "post",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     @OrderBy("id DESC")
     @JsonBackReference //순환참조 방지
