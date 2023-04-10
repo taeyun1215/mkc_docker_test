@@ -55,7 +55,7 @@ public class EmailController {
         String code = getRandomNumber(6);
 
         Context context = new Context();
-        context.setVariable("link", "/login/" +
+        context.setVariable("link", "/user/" +
                 "authComplete?code=" + code +
                 "&username=" + user.getUsername() + "&email=" + user.getEmail());
         context.setVariable("username", user.getUsername());
