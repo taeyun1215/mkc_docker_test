@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -19,19 +20,21 @@ public class ImagePostDetailViewResponse {
     public static List<ImagePostDetailViewResponse> from(List<Image> images) {
         List<ImagePostDetailViewResponse> imagePostDetailViewResponses = new ArrayList<>();
 
-        images.forEach(image -> {
-            ImagePostDetailViewResponse saveImage = ImagePostDetailViewResponse.builder()
-                    .id(image.getId())
-                    .originalImageName(image.getOriginalImageName())
-                    .imageName(image.getImageName())
-                    .imageUrl(image.getImageUrl())
-                    .build();
-
-            imagePostDetailViewResponses.add(saveImage);
-        });
-
         if (images.size() == 0) {
             imagePostDetailViewResponses.add(null);
+        } else {
+            Collections.reverse(images);
+
+            images.forEach(image -> {
+                ImagePostDetailViewResponse saveImage = ImagePostDetailViewResponse.builder()
+                        .id(image.getId())
+                        .originalImageName(image.getOriginalImageName())
+                        .imageName(image.getImageName())
+                        .imageUrl(image.getImageUrl())
+                        .build();
+
+                imagePostDetailViewResponses.add(saveImage);
+            });
         }
 
         return imagePostDetailViewResponses;
