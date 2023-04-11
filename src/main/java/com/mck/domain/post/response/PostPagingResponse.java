@@ -27,7 +27,7 @@ public class PostPagingResponse {
             PostLikePostPagingResponse postLikePostPagingResponse;
 
             if (post.getImages().size() != 0) {
-                imagePostPagingResponse = ImagePostPagingResponse.from(post.getImages().get(0), post.getImages().size());
+                imagePostPagingResponse = ImagePostPagingResponse.from(post.getImages().get(post.getImages().size() - 1), post.getImages().size());
             } else {
                 imagePostPagingResponse = ImagePostPagingResponse.from(null, 0);
             }
