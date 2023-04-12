@@ -238,7 +238,7 @@ public class UserController {
         user.setJoinedAt(LocalDateTime.now());
         userService.updateUser(user);
 
-        model.addAttribute("username", username);
+        model.addAttribute("nickname", user.getNickname());
 
         returnObject = ReturnObject.builder().success(true).data(model).build();
 
