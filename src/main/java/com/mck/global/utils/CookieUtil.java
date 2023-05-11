@@ -17,5 +17,4 @@ public class CookieUtil {
 
         response.addHeader("Set-Cookie", cookie.toString());
     }
-
 }
