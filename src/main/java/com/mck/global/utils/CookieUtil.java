@@ -11,7 +11,7 @@ public class CookieUtil {
                 .path("/")
                 .sameSite("None")
                 .domain("localhost")
-//                .httpOnly(false)
+                .httpOnly(true)
                 .secure(true)
                 .build();
 

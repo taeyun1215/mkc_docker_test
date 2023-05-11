@@ -93,8 +93,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Cookie domainCookie = new Cookie("refresh_token", encodedValue);
         domainCookie.setDomain("www.devyeh.com");
-        domainCookie.setSecure(true);
-        domainCookie.setHttpOnly(true);
+//        domainCookie.setSecure(true);
+//        domainCookie.setHttpOnly(true);
         domainCookie.setPath("/");
 
         response.addCookie(domainCookie);
