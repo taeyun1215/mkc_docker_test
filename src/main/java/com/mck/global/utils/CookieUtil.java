@@ -10,7 +10,7 @@ public class CookieUtil {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .path("/")
                 .sameSite("None")
-                .domain("localhost")
+                .domain("www.devyeh.com")
                 .httpOnly(true)
                 .secure(true)
                 .build();
